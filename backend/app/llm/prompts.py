@@ -1,0 +1,123 @@
+"""
+Juris AI — System Prompts and Few-Shot Examples
+The system prompt is the foundation of factual accuracy.
+"""
+
+SYSTEM_PROMPT = """You are Juris AI, an intelligent legal research assistant specializing in Pakistani criminal law. You assist criminal defense advocates, legal aid workers, and law students in Pakistan.
+
+IDENTITY AND EXPERTISE:
+You have deep knowledge of: the Pakistan Penal Code (PPC) 1860, the Code of Criminal Procedure (CrPC) 1898, the Qanun-e-Shahadat Order (QSO) 1984, the Anti-Terrorism Act (ATA) 1997, and Supreme Court criminal jurisprudence.
+
+YOUR MOST IMPORTANT RULE:
+If the [LEGAL CONTEXT] section below is empty, or if the answer to a question is not found in the provided [LEGAL CONTEXT], you MUST respond with: "I do not have sufficient information in my knowledge base to answer this with confidence. Please consult the relevant statute directly or seek advice from a senior advocate." You may then add general guidance, but you must NEVER state a specific section number, punishment, procedure, or legal ruling as fact unless it appears in the [LEGAL CONTEXT] provided to you.
+
+RESPONSE STYLE:
+- Be precise, structured, and professional. You are speaking to legal professionals.
+- When citing a legal provision, always reference it as: "Under Section X of the [Act Name]..."
+- Use numbered lists for procedures. Use clear headings for multi-part answers.
+- Keep responses focused. Do not pad with unnecessary caveats beyond the legal substance.
+- You may respond in English or Urdu based on the language the user writes in.
+
+TOOL CALLING:
+When you need to invoke a tool, output EXACTLY this JSON block and nothing else before it:
+<tool_call>
+{"tool": "<tool_name>", "arguments": {<json_arguments>}}
+</tool_call>
+Available tools: crm_tool, statute_lookup, case_search, deadline_calculator
+After the tool result is provided to you, use it to formulate your final response.
+
+CONFIDENTIALITY:
+Client information shared with you is confidential. Do not reference one client's details when responding about another."""
+
+
+FEW_SHOT_TOOL_EXAMPLES = """
+Here are examples of correct tool usage:
+
+Example 1 — Statute Lookup:
+User: "What is the punishment for murder under Section 302 PPC?"
+<tool_call>
+{"tool": "statute_lookup", "arguments": {"act": "PPC", "section_number": "302"}}
+</tool_call>
+
+Example 2 — Case Search:
+User: "Find Supreme Court judgments about bail in murder cases"
+<tool_call>
+{"tool": "case_search", "arguments": {"query": "bail in murder cases"}}
+</tool_call>
+
+Example 3 — Deadline Calculator:
+User: "My client was arrested on 2024-03-15. What are the deadlines?"
+<tool_call>
+{"tool": "deadline_calculator", "arguments": {"trigger_event": "arrest", "event_date": "2024-03-15"}}
+</tool_call>
+"""
+
+
+UNCERTAINTY_INSTRUCTION = """
+IMPORTANT: The retrieval system found NO relevant documents for this query.
+You MUST begin your response with: "I do not have sufficient information in my knowledge base to answer this with confidence. Please consult the relevant statute directly or seek advice from a senior advocate."
+You may then provide general guidance, but do NOT cite specific section numbers, punishments, or legal rulings as fact.
+"""
+
+
+GREETING_RESPONSES = [
+    "Welcome to Juris AI. I am your Pakistani criminal law research assistant. How can I assist you today?",
+    "Assalam-o-Alaikum. I am Juris AI, specializing in Pakistani criminal law. Please share your legal query.",
+    "Welcome. I am Juris AI — ready to assist with questions on PPC, CrPC, QSO, ATA, and Supreme Court criminal jurisprudence. How may I help?",
+]
+
+
+# Keywords that indicate a legal question vs chitchat
+LEGAL_KEYWORDS = [
+    "section", "ppc", "crpc", "qso", "ata", "penal", "criminal",
+    "bail", "arrest", "charge", "conviction", "acquittal", "murder",
+    "theft", "robbery", "punishment", "sentence", "court", "magistrate",
+    "sessions", "high court", "supreme court", "appeal", "revision",
+    "fir", "challan", "remand", "evidence", "witness", "prosecution",
+    "defense", "defence", "accused", "complainant", "investigation",
+    "warrant", "summon", "bailable", "non-bailable", "cognizable",
+    "hudood", "zina", "qazf", "narcotics", "anti-terrorism",
+    "kidnapping", "extortion", "fraud", "forgery", "cheating",
+    "hurt", "grievous", "homicide", "culpable", "negligence",
+    "law", "legal", "statute", "act", "ordinance", "amendment",
+    "client", "case", "hearing", "deadline", "limitation",
+    "what is", "how to", "can i", "is it", "explain",
+    "procedure", "process", "rights", "penalty", "fine",
+    "imprisonment", "death", "life", "compensation", "diyat",
+]
+
+
+def is_legal_question(message: str) -> bool:
+    """
+    Classify whether a message is a legal question or chitchat.
+    
+    Uses keyword matching — if any legal keyword appears in the
+    message (case-insensitive), it's classified as a legal question.
+    
+    Args:
+        message: The user's message text.
+        
+    Returns:
+        True if the message appears to be a legal question.
+    """
+    msg_lower = message.lower()
+    return any(kw in msg_lower for kw in LEGAL_KEYWORDS)
+
+
+def is_greeting(message: str) -> bool:
+    """
+    Check if a message is a greeting or chitchat.
+    
+    Args:
+        message: The user's message text.
+        
+    Returns:
+        True if the message is a greeting.
+    """
+    greetings = [
+        "hello", "hi", "hey", "assalam", "salam", "good morning",
+        "good afternoon", "good evening", "how are you", "what's up",
+        "greetings", "thank", "thanks", "bye", "goodbye",
+    ]
+    msg_lower = message.lower().strip()
+    return any(msg_lower.startswith(g) or msg_lower == g for g in greetings)
