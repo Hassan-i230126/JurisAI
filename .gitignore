@@ -1,0 +1,26 @@
+# Dependencies
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Environment
+.env
+
+# Data directories (large/generated files)
+data/chroma_db/
+data/logs/
+data/processed/
+data/juris.db
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Virtual environments
+venv/
+.venv/
+env/
