@@ -106,18 +106,6 @@ class ToolOrchestrator:
                     arguments={"query": message}
                 )
 
-        # CRM tool: client management keywords
-        crm_keywords = [
-            "my client", "client name", "remember", "client profile",
-            "add client", "new client", "update client", "client info",
-            "save client", "load client", "list clients"
-        ]
-        if any(kw in msg_lower for kw in crm_keywords):
-            return ToolCall(
-                tool_name="crm_tool",
-                arguments={"action": "search", "query": message}
-            )
-
         return None
 
     def parse_tool_call_from_llm(self, text: str) -> Optional[ToolCall]:

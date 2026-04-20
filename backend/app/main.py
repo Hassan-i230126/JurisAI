@@ -223,17 +223,19 @@ async def _get_or_create_http_conversation_manager(
     client_id: Optional[str],
 ) -> tuple[ConversationManager, bool]:
     """Get or create per-session conversation manager for HTTP streaming."""
-    manager = _http_conversation_managers.get(session_id)
+    cache_key = f"{session_id}_{client_id}" if client_id else session_id
+    manager = _http_conversation_managers.get(cache_key)
 
     if manager is None:
         manager = ConversationManager(
             session_id=session_id,
+            client_id=client_id,
             retriever=_retriever,
             tool_orchestrator=_tool_orchestrator,
             llm_engine=_llm_engine,
             crm=_crm,
         )
-        _http_conversation_managers[session_id] = manager
+        _http_conversation_managers[cache_key] = manager
 
     client_loaded = False
     if client_id:
@@ -269,7 +271,8 @@ async def chat_stream(payload: ChatStreamRequest, request: Request):
         payload.client_id,
     )
 
-    session_lock = _http_session_locks.setdefault(payload.session_id, asyncio.Lock())
+    cache_key = f"{payload.session_id}_{payload.client_id}" if payload.client_id else payload.session_id
+    session_lock = _http_session_locks.setdefault(cache_key, asyncio.Lock())
     if session_lock.locked():
         return JSONResponse(
             status_code=409,
@@ -329,6 +332,12 @@ async def health_check():
         index_size=index_size,
         uptime_seconds=round(uptime, 1),
     )
+
+
+@app.get("/api/health", response_model=HealthResponse)
+async def api_health_check():
+    """Health alias for frontend dev proxy and API namespacing."""
+    return await health_check()
 
 
 @app.get("/metrics")
@@ -425,6 +434,7 @@ async def create_client(client: ClientCreate):
 
     result = await _crm.run(
         action="create",
+        client_id=client.client_id,
         name=client.name,
         cnic=client.cnic,
         contact=client.contact,
@@ -452,6 +462,20 @@ async def get_client(client_id: str):
 
     if result.success:
         return {"client": result.data}
+    else:
+        raise HTTPException(status_code=404, detail=result.error_message)
+
+
+@app.delete("/api/clients/{client_id}")
+async def delete_client(client_id: str):
+    """Delete a specific client profile."""
+    if not _crm:
+        raise HTTPException(status_code=503, detail="CRM not initialized")
+
+    result = await _crm.run(action="delete", client_id=client_id)
+
+    if result.success:
+        return {"status": "deleted", "client_id": client_id}
     else:
         raise HTTPException(status_code=404, detail=result.error_message)
 

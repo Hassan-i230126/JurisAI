@@ -117,8 +117,13 @@ class ConversationManager:
         self.history.append(Message(role="user", content=user_message))
 
         # Step 2: Routing decision
-        if is_greeting(user_message) and not is_legal_question(user_message):
-            # Greeting/chitchat — respond directly without RAG or tools
+        if self.client_id:
+            context = await self.crm.get_client_context(self.client_id)
+            if context:
+                self._client_context = context
+
+        if is_greeting(user_message) and not is_legal_question(user_message) and not self._client_context:
+            # Greeting/chitchat — respond directly without RAG or tools (only if no client context)
             greeting = random.choice(GREETING_RESPONSES)
             self.history.append(Message(role="assistant", content=greeting))
 
@@ -216,20 +221,27 @@ class ConversationManager:
                 "summary": tool_result.formatted_text[:200],
             }
 
+            # Re-generate with tool result
+            messages.append({"role": "assistant", "content": response_text})
             if tool_result.success:
-                # Re-generate with tool result
-                messages.append({"role": "assistant", "content": response_text})
                 messages.append({
                     "role": "user",
                     "content": f"[TOOL RESULT]\n{tool_result.formatted_text}"
                 })
+            else:
+                # If a tool fails, prompt the LLM to gracefully inform the user
+                messages.append({
+                    "role": "user",
+                    "content": f"[TOOL ERROR]\nThe tool failed to execute: {tool_result.formatted_text}\nPlease gracefully inform the user about this failure."
+                })
 
-                full_response = []
-                async for token in self.llm_engine.generate_stream(messages):
-                    full_response.append(token)
-                    yield {"type": "token", "content": token}
+            full_response = []
+            async for token in self.llm_engine.generate_stream(messages):
+                full_response.append(token)
+                yield {"type": "token", "content": token}
 
-                response_text = "".join(full_response)
+            # Update the response text without the raw tool call block to prevent it leaking in history
+            response_text = "".join(full_response)
 
         # Step 7: Apply hallucination guard
         response_text = self.llm_engine.apply_hallucination_guard(

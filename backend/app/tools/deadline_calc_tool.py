@@ -196,10 +196,10 @@ class DeadlineCalcTool(ToolBase):
         Returns:
             A datetime object, or None if parsing fails.
         """
-        if not date_str or not date_str.strip():
+        if not date_str or not str(date_str).strip():
             return None
 
-        date_str = date_str.strip()
+        date_str = str(date_str).strip()
 
         # Try YYYY-MM-DD
         try:

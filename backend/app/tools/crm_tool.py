@@ -43,7 +43,7 @@ class CRMTool(ToolBase):
             "court_name": {"type": "string", "description": "Name of the court"},
             "next_hearing_date": {"type": "string", "description": "Next hearing date (YYYY-MM-DD)"},
             "notes": {"type": "string", "description": "Additional notes"},
-            "field": {"type": "string", "description": "Field name to update"},
+            "field": {"type": "string", "description": "Field name to update (name, cnic, contact, case_type, charges, bail_status, court_name, next_hearing_date, notes)"},
             "value": {"type": "string", "description": "New value for the field"},
             "query": {"type": "string", "description": "Search query (name or CNIC)"},
             "session_id": {"type": "string", "description": "Session ID for interaction logging"},
@@ -118,6 +118,8 @@ class CRMTool(ToolBase):
                 )
             elif action == "list":
                 return await self._list_clients()
+            elif action == "delete":
+                return await self._delete_client(kwargs.get("client_id", ""))
             elif action == "search":
                 return await self._search_clients(kwargs.get("query", kwargs.get("name", "")))
             elif action == "log_interaction":
@@ -144,10 +146,23 @@ class CRMTool(ToolBase):
 
     async def _create_client(self, **kwargs) -> ToolResult:
         """Create a new client profile."""
-        client_id = str(uuid.uuid4())[:8]
+        client_id = kwargs.get("client_id")
+        if not client_id:
+            client_id = str(uuid.uuid4())[:8]
+
         now = datetime.utcnow().isoformat()
 
         async with aiosqlite.connect(self.db_path, timeout=10) as db:
+            # Check if client_id already exists
+            cursor = await db.execute("SELECT 1 FROM clients WHERE client_id = ?", (client_id,))
+            if await cursor.fetchone():
+                return ToolResult(
+                    success=False,
+                    data=None,
+                    formatted_text=f"Client ID '{client_id}' is already taken.",
+                    error_message=f"Client ID '{client_id}' is already taken."
+                )
+
             await db.execute(
                 """INSERT INTO clients 
                    (client_id, name, cnic, contact, case_type, charges, 
@@ -268,6 +283,34 @@ class CRMTool(ToolBase):
             formatted_text="\n".join(lines)
         )
 
+    async def _delete_client(self, client_id: str) -> ToolResult:
+        """Delete a client profile."""
+        if not client_id:
+            return ToolResult(
+                success=False, data=None,
+                formatted_text="Please provide a client ID to delete.",
+                error_message="Missing client_id"
+            )
+
+        async with aiosqlite.connect(self.db_path, timeout=10) as db:
+            await db.execute("DELETE FROM interactions WHERE client_id = ?", (client_id,))
+            cursor = await db.execute("DELETE FROM clients WHERE client_id = ?", (client_id,))
+            await db.commit()
+            if cursor.rowcount == 0:
+                return ToolResult(
+                    success=False, data=None,
+                    formatted_text=f"No client found with ID '{client_id}'.",
+                    error_message="Client not found"
+                )
+
+        import logging
+        logging.getLogger(__name__).info(f"Client deleted | id={client_id}")
+        return ToolResult(
+            success=True,
+            data={"client_id": client_id},
+            formatted_text=f"Client '{client_id}' successfully deleted."
+        )
+
     async def _search_clients(self, query: str) -> ToolResult:
         """Search clients by name or CNIC."""
         if not query:
@@ -329,7 +372,10 @@ class CRMTool(ToolBase):
         if result.success and result.data:
             c = result.data
             return (
-                f"[CLIENT PROFILE] Name: {c.get('name', 'N/A')} | "
+                f"[CLIENT PROFILE] Client ID: {c.get('client_id', 'N/A')} | "
+                f"Name: {c.get('name', 'N/A')} | "
+                f"Contact: {c.get('contact', 'N/A')} | "
+                f"Case Type: {c.get('case_type', 'N/A')} | "
                 f"Charges: {c.get('charges', 'N/A')} | "
                 f"Bail Status: {c.get('bail_status', 'N/A')} | "
                 f"Court: {c.get('court_name', 'N/A')} | "

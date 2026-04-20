@@ -154,6 +154,7 @@ class ToolCall:
 
 class ClientCreate(BaseModel):
     """Request body for creating a new CRM client."""
+    client_id: str
     name: str
     cnic: Optional[str] = None
     contact: Optional[str] = None
