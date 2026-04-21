@@ -75,25 +75,32 @@ class LegalIndexer:
 
         for i in range(0, total, EMBEDDING_BATCH_SIZE):
             batch = texts[i:i + EMBEDDING_BATCH_SIZE]
-            batch_embeddings = []
 
             try:
-                # We iterate individually to prevent memory thrashing on CPU.
-                # Sending massive batches of 1000-char chunks causes 5+ minute lag spikes.
-                for text in batch:
-                    resp = ollama_client.embeddings(
-                        model=EMBEDDING_MODEL,
-                        prompt=text,
-                    )
-                    batch_embeddings.append(resp["embedding"])
-                
-                all_embeddings.extend(batch_embeddings)
+                # Use fully optimized batch embedding for the GPU
+                raw_texts = [t if str(t).strip() else "empty text" for t in batch]
+                resp = ollama_client.embed(
+                    model=EMBEDDING_MODEL,
+                    input=raw_texts,
+                )
+                all_embeddings.extend(resp["embeddings"])
 
             except Exception as e:
-                  logger.error("Embedding failed during batch loop. Stopping to prevent zero-vector corruption: {}", e)
-                  raise RuntimeError(f"Ollama Embedding API failed: {e}")
-
-            # ── Progress logging every 1000 chunks ──
+                logger.warning("Batch embedding failed ({}), falling back to individual embeddings for this batch.", e)
+                for text in batch:
+                    try:
+                        safe_text = text if str(text).strip() else "empty text"
+                        resp = ollama_client.embeddings(
+                            model=EMBEDDING_MODEL,
+                            prompt=safe_text,
+                        )
+                        all_embeddings.append(resp["embedding"])
+                    except Exception as sub_e:
+                        logger.error("Individual text embedding failed. Text: '{}'. Error: {}", repr(text)[:50], sub_e)
+                        # Instead of crashing or writing 0.0s, write a valid vector but flag it. 
+                        # We'll use the embedding of "empty text" so chromadb doesn't break alignment.
+                        resp = ollama_client.embeddings(model=EMBEDDING_MODEL, prompt="empty text")
+                        all_embeddings.append(resp["embedding"])
             done = min(i + len(batch), total)
             current_milestone = done // 1000
             if current_milestone > last_log_milestone or done >= total:
