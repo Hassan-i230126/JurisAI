@@ -977,3 +977,6 @@ h1, h2, h3, h4, h5, h6, .modal-title, .loading-title, .chat-empty-title {
 .brand-icon, .brand-name {
   color: #ffffff !important;
 }
+
+/* Ensure all text in message bubbles is white */
+.message-assistant .markdown-body, .message-assistant .markdown-body h1, .message-assistant .markdown-body h2, .message-assistant .markdown-body h3, .message-assistant .markdown-body h4, .message-assistant .markdown-body h5, .message-assistant .markdown-body h6, .message-assistant .markdown-body p, .message-assistant .markdown-body strong, .message-assistant .markdown-body li { color: #ffffff !important; }

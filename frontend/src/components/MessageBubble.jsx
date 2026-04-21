@@ -48,7 +48,7 @@ export default function MessageBubble({ message }) {
             ) : null}
 
             {!message.isStreaming && message.citations?.length ? (
-              <CitationBar citations={message.citations} />
+              <CitationBar citations={message.citations.slice(0, 3)} />
             ) : null}
           </div>
         )}
