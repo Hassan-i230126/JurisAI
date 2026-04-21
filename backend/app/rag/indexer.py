@@ -90,12 +90,8 @@ class LegalIndexer:
                 all_embeddings.extend(batch_embeddings)
 
             except Exception as e:
-                logger.error("Embedding failed during batch loop: {}", e)
-                # Pad to ensure indexing doesn't completely crash out of bounds
-                while len(batch_embeddings) < len(batch):
-                    batch_embeddings.append([0.0] * 1024)
-                all_embeddings.extend(batch_embeddings)
-                self._total_errors += 1
+                  logger.error("Embedding failed during batch loop. Stopping to prevent zero-vector corruption: {}", e)
+                  raise RuntimeError(f"Ollama Embedding API failed: {e}")
 
             # ── Progress logging every 1000 chunks ──
             done = min(i + len(batch), total)

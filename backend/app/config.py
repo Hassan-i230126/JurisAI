@@ -57,13 +57,13 @@ DATASET_JUDGMENTS_DIR: str = os.getenv(
 # ─── RAG Configuration ───────────────────────────────────────────────────────
 RAG_TOP_K: int = int(os.getenv("RAG_TOP_K", "3"))
 RAG_DISTANCE_THRESHOLD: float = float(os.getenv("RAG_DISTANCE_THRESHOLD", "1.4"))
-CHUNK_SIZE: int = int(os.getenv("CHUNK_SIZE", "350"))
-CHUNK_OVERLAP: int = int(os.getenv("CHUNK_OVERLAP", "50"))
+CHUNK_SIZE: int = int(os.getenv("CHUNK_SIZE", "1024"))
+CHUNK_OVERLAP: int = int(os.getenv("CHUNK_OVERLAP", "100"))
 
 # ─── LLM Generation Parameters ───────────────────────────────────────────────
 LLM_TEMPERATURE: float = float(os.getenv("LLM_TEMPERATURE", "0.1"))
 LLM_MAX_TOKENS: int = int(os.getenv("LLM_MAX_TOKENS", "1024"))
-LLM_NUM_CTX: int = int(os.getenv("LLM_NUM_CTX", "3072"))
+LLM_NUM_CTX: int = int(os.getenv("LLM_NUM_CTX", "8192"))
 LLM_NUM_THREADS: int = int(os.getenv("LLM_NUM_THREADS", "8"))
 
 # ─── Conversation Configuration ──────────────────────────────────────────────
