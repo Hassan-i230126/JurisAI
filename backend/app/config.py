@@ -55,10 +55,10 @@ DATASET_JUDGMENTS_DIR: str = os.getenv(
 )
 
 # ─── RAG Configuration ───────────────────────────────────────────────────────
-RAG_TOP_K: int = int(os.getenv("RAG_TOP_K", "3"))
+RAG_TOP_K: int = int(os.getenv("RAG_TOP_K", "5"))
 RAG_DISTANCE_THRESHOLD: float = float(os.getenv("RAG_DISTANCE_THRESHOLD", "1.4"))
-CHUNK_SIZE: int = int(os.getenv("CHUNK_SIZE", "1024"))
-CHUNK_OVERLAP: int = int(os.getenv("CHUNK_OVERLAP", "100"))
+CHUNK_SIZE: int = int(os.getenv("CHUNK_SIZE", "512"))
+CHUNK_OVERLAP: int = int(os.getenv("CHUNK_OVERLAP", "64"))
 
 # ─── LLM Generation Parameters ───────────────────────────────────────────────
 LLM_TEMPERATURE: float = float(os.getenv("LLM_TEMPERATURE", "0.1"))
@@ -81,10 +81,10 @@ HOST: str = os.getenv("HOST", "0.0.0.0")
 PORT: int = int(os.getenv("PORT", "8000"))
 
 # ─── Indexing Configuration ──────────────────────────────────────────────────
-INDEXING_BATCH_SIZE: int = int(os.getenv("INDEXING_BATCH_SIZE", "4"))
-EMBEDDING_BATCH_SIZE: int = int(os.getenv("EMBEDDING_BATCH_SIZE", "32"))
-JUDGMENT_BATCH_SIZE: int = int(os.getenv("JUDGMENT_BATCH_SIZE", "50"))
-MAX_JUDGMENT_CHARS: int = int(os.getenv("MAX_JUDGMENT_CHARS", "3000"))
+INDEXING_BATCH_SIZE: int = int(os.getenv("INDEXING_BATCH_SIZE", "16"))
+EMBEDDING_BATCH_SIZE: int = int(os.getenv("EMBEDDING_BATCH_SIZE", "128"))
+JUDGMENT_BATCH_SIZE: int = int(os.getenv("JUDGMENT_BATCH_SIZE", "200"))
+MAX_JUDGMENT_CHARS: int = int(os.getenv("MAX_JUDGMENT_CHARS", "6000"))
 
 # ─── Criminal Law Filter Keywords ────────────────────────────────────────────
 CRIMINAL_FILTER_KEYWORDS = [
