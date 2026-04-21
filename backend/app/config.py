@@ -18,7 +18,16 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 # ─── Ollama Configuration ─────────────────────────────────────────────────────
 OLLAMA_BASE_URL: str = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
 LLM_MODEL: str = os.getenv("LLM_MODEL", "phi4-mini")
-EMBEDDING_MODEL: str = os.getenv("EMBEDDING_MODEL", "BAAI/bge-small-en-v1.5")
+EMBEDDING_MODEL: str = os.getenv("EMBEDDING_MODEL", "BAAI/bge-m3")
+
+# Map standard Ollama shortnames to proper HuggingFace repo IDs for SentenceTransformers
+if EMBEDDING_MODEL == "bge-m3":
+    EMBEDDING_MODEL = "BAAI/bge-m3"
+elif EMBEDDING_MODEL == "nomic-embed-text":
+    EMBEDDING_MODEL = "nomic-ai/nomic-embed-text-v1.5"
+elif "/" not in EMBEDDING_MODEL:
+    EMBEDDING_MODEL = f"BAAI/{EMBEDDING_MODEL}"
+
 
 # ─── ChromaDB Configuration ──────────────────────────────────────────────────
 CHROMA_PERSIST_DIR: str = os.getenv(
