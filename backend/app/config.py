@@ -18,7 +18,7 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 # ─── Ollama Configuration ─────────────────────────────────────────────────────
 OLLAMA_BASE_URL: str = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
 LLM_MODEL: str = os.getenv("LLM_MODEL", "phi4-mini")
-EMBEDDING_MODEL: str = os.getenv("EMBEDDING_MODEL", "bge-m3")
+EMBEDDING_MODEL: str = os.getenv("EMBEDDING_MODEL", "nomic-embed-text")
 
 # ─── ChromaDB Configuration ──────────────────────────────────────────────────
 CHROMA_PERSIST_DIR: str = os.getenv(
