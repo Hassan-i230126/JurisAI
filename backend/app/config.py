@@ -82,7 +82,7 @@ PORT: int = int(os.getenv("PORT", "8000"))
 
 # ─── Indexing Configuration ──────────────────────────────────────────────────
 INDEXING_BATCH_SIZE: int = int(os.getenv("INDEXING_BATCH_SIZE", "16"))
-EMBEDDING_BATCH_SIZE: int = int(os.getenv("EMBEDDING_BATCH_SIZE", "128"))
+EMBEDDING_BATCH_SIZE: int = int(os.getenv("EMBEDDING_BATCH_SIZE", "32"))
 JUDGMENT_BATCH_SIZE: int = int(os.getenv("JUDGMENT_BATCH_SIZE", "200"))
 MAX_JUDGMENT_CHARS: int = int(os.getenv("MAX_JUDGMENT_CHARS", "6000"))
 
