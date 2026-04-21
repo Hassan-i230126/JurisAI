@@ -8,8 +8,8 @@ import time
 from typing import List, Set
 
 import chromadb
-import ollama as ollama_client
 from loguru import logger
+import re
 
 from app.config import (
     CHROMA_PERSIST_DIR,
@@ -55,52 +55,44 @@ class LegalIndexer:
 
     def _embed_texts(self, texts: List[str], label: str = "") -> List[List[float]]:
         """
-        Generate embeddings using Ollama's batch embed API.
+        Generate embeddings using a native SentenceTransformers backend.
         
-        Uses ollama.embed() with list input — sends EMBEDDING_BATCH_SIZE texts
-        per HTTP request instead of one-by-one, dramatically reducing overhead.
-        Logs progress with ETA every 1000 chunks.
-        
-        Args:
-            texts: List of text strings to embed.
-            label: Label for progress logging (e.g. 'Dataset 1').
-            
-        Returns:
-            List of embedding vectors (one per input text).
+        Bypasses Ollama API for embeddings entirely to remove NaN crashes on
+        Colab's T4 GPU and provides extremely fast encoding performance.
         """
         all_embeddings = []
         total = len(texts)
         start_time = time.time()
         last_log_milestone = -1
 
+        # Lazy load the HuggingFace model once (auto-detects GPU)
+        if not hasattr(self, '_st_model'):
+            from sentence_transformers import SentenceTransformer
+            logger.info("Loading SentenceTransformers model: {}", EMBEDDING_MODEL)
+            self._st_model = SentenceTransformer(EMBEDDING_MODEL)
+
         for i in range(0, total, EMBEDDING_BATCH_SIZE):
             batch = texts[i:i + EMBEDDING_BATCH_SIZE]
 
             try:
-                # Use fully optimized batch embedding for the GPU
-                raw_texts = [t if str(t).strip() else "empty text" for t in batch]
-                resp = ollama_client.embed(
-                    model=EMBEDDING_MODEL,
-                    input=raw_texts,
-                )
-                all_embeddings.extend(resp["embeddings"])
+                # Clean text to remove bad whitespace/control characters 
+                cleaned_batch = []
+                for t in batch:
+                    # Strip internal repetitive spaces and bad symbols
+                    cln = re.sub(r'[\x00-\x08\x0b\x0c\x0e-\x1f]', '', str(t))
+                    cln = re.sub(r'\s+', ' ', cln).strip()
+                    cleaned_batch.append(cln if len(cln) > 5 else "empty text")
+
+                # Efficient native PyTorch batch encoding (returns a numpy array)
+                batch_embs = self._st_model.encode(cleaned_batch, show_progress_bar=False, normalize_embeddings=True)
+                
+                # Convert the numpy array rows directly into python lists
+                all_embeddings.extend(batch_embs.tolist())
 
             except Exception as e:
-                logger.warning("Batch embedding failed ({}), falling back to individual embeddings for this batch.", e)
-                for text in batch:
-                    try:
-                        safe_text = text if str(text).strip() else "empty text"
-                        resp = ollama_client.embeddings(
-                            model=EMBEDDING_MODEL,
-                            prompt=safe_text,
-                        )
-                        all_embeddings.append(resp["embedding"])
-                    except Exception as sub_e:
-                        logger.error("Individual text embedding failed. Text: '{}'. Error: {}", repr(text)[:50], sub_e)
-                        # Instead of crashing or writing 0.0s, write a valid vector but flag it. 
-                        # We'll use the embedding of "empty text" so chromadb doesn't break alignment.
-                        resp = ollama_client.embeddings(model=EMBEDDING_MODEL, prompt="empty text")
-                        all_embeddings.append(resp["embedding"])
+                logger.error("SentenceTransformers model failed on batch: {}", e)
+                raise RuntimeError(f"Native Embedding API failed: {e}")
+
             done = min(i + len(batch), total)
             current_milestone = done // 1000
             if current_milestone > last_log_milestone or done >= total:

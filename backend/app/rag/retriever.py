@@ -11,6 +11,8 @@ from typing import List, Optional
 import chromadb
 import httpx
 from loguru import logger
+import asyncio
+import re
 
 from app.config import (
     CHROMA_PERSIST_DIR,
@@ -58,9 +60,9 @@ class LegalRetriever:
 
     async def embed_query(self, text: str) -> List[float]:
         """
-        Generate an embedding for a query text using bge-m3 via Ollama.
+        Generate an embedding for a query text using SentenceTransformers.
         
-        Checks the LRU cache first. If not cached, calls Ollama
+        Checks the LRU cache first. If not cached, calls the local ST model
         in a thread executor to avoid blocking the event loop.
         
         Args:
@@ -75,20 +77,30 @@ class LegalRetriever:
             logger.debug("Embedding cache hit for query: {}...", text[:50])
             return cached
 
-        payload = {
-            "model": EMBEDDING_MODEL,
-            "prompt": text,
-        }
+        # Lazy load the HuggingFace model once
+        if not hasattr(self, '_st_model'):
+            from sentence_transformers import SentenceTransformer
+            logger.info("Loading SentenceTransformers model: {}", EMBEDDING_MODEL)
+            self._st_model = SentenceTransformer(EMBEDDING_MODEL)
 
-        async with httpx.AsyncClient(base_url=OLLAMA_BASE_URL, timeout=self._embedding_timeout) as client:
-            response = await client.post("/api/embeddings", json=payload)
-            response.raise_for_status()
-            body = response.json()
+        # Sanitize text
+        cln = re.sub(r'[\x00-\x08\x0b\x0c\x0e-\x1f]', '', str(text))
+        cln = re.sub(r'\s+', ' ', cln).strip()
+        safe_text = cln if len(cln) > 2 else "empty query"
 
-        embedding = body.get("embedding")
+        # Run encoding in a thread to keep the async loop free
+        loop = asyncio.get_running_loop()
+        embedding_array = await loop.run_in_executor(
+            None, 
+            lambda: self._st_model.encode([safe_text], show_progress_bar=False, normalize_embeddings=True)
+        )
+        
+        embedding = embedding_array[0].tolist()
+
         if not embedding:
             raise RuntimeError("Embedding response missing 'embedding' field")
 
+        import math
         if any((not math.isfinite(float(x))) for x in embedding):
             raise RuntimeError("Embedding vector contains non-finite values")
 
