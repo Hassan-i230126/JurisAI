@@ -1,0 +1,206 @@
+[
+  {
+    "id": "conv_01",
+    "description": "Simple greeting — no RAG, no tool",
+    "category": "greeting",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Hello, I need help with a legal matter.",
+        "expected_contains": ["Juris AI", "legal", "assist"],
+        "expected_not_contains": [],
+        "expected_tool": null,
+        "policy_check": "in_scope"
+      }
+    ]
+  },
+  {
+    "id": "conv_02",
+    "description": "Out-of-domain rejection — sports query",
+    "category": "out_of_domain",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Who won the cricket World Cup in 2023?",
+        "expected_contains": ["out of my scope", "Pakistani criminal law"],
+        "expected_not_contains": [],
+        "expected_tool": null,
+        "policy_check": "out_of_scope"
+      }
+    ]
+  },
+  {
+    "id": "conv_03",
+    "description": "Out-of-domain rejection — foreign law",
+    "category": "out_of_domain",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Explain the First Amendment of the US Constitution.",
+        "expected_contains": ["out of my scope"],
+        "expected_not_contains": [],
+        "expected_tool": null,
+        "policy_check": "out_of_scope"
+      }
+    ]
+  },
+  {
+    "id": "conv_04",
+    "description": "Murder charge legal query — RAG expected",
+    "category": "legal_rag",
+    "turns": [
+      {
+        "role": "user",
+        "content": "What is the punishment for murder under Section 302 PPC?",
+        "expected_contains": ["302", "death", "imprisonment"],
+        "expected_not_contains": [],
+        "expected_tool": "statute_lookup",
+        "policy_check": "in_scope"
+      }
+    ]
+  },
+  {
+    "id": "conv_05",
+    "description": "Bail procedures after arrest — multi-turn",
+    "category": "legal_rag",
+    "turns": [
+      {
+        "role": "user",
+        "content": "My client was arrested for theft under Section 379 PPC. What should I do first?",
+        "expected_contains": ["bail", "379"],
+        "expected_not_contains": [],
+        "expected_tool": null,
+        "policy_check": "in_scope"
+      },
+      {
+        "role": "user",
+        "content": "What are the deadlines I need to be aware of?",
+        "expected_contains": ["days", "deadline"],
+        "expected_not_contains": [],
+        "expected_tool": "deadline_calculator",
+        "policy_check": "in_scope"
+      }
+    ]
+  },
+  {
+    "id": "conv_06",
+    "description": "Deadline calculation with specific date",
+    "category": "tool_only",
+    "turns": [
+      {
+        "role": "user",
+        "content": "My client was arrested on 2024-03-15. What are the legal deadlines?",
+        "expected_contains": ["deadline", "2024"],
+        "expected_not_contains": [],
+        "expected_tool": "deadline_calculator",
+        "policy_check": "in_scope"
+      }
+    ]
+  },
+  {
+    "id": "conv_07",
+    "description": "Anti-Terrorism Act query — RAG expected",
+    "category": "legal_rag",
+    "turns": [
+      {
+        "role": "user",
+        "content": "What does the Anti-Terrorism Act 1997 say about terrorism financing?",
+        "expected_contains": ["Anti-Terrorism", "financing"],
+        "expected_not_contains": [],
+        "expected_tool": null,
+        "policy_check": "in_scope"
+      }
+    ]
+  },
+  {
+    "id": "conv_08",
+    "description": "Evidence law query — QSO",
+    "category": "legal_rag",
+    "turns": [
+      {
+        "role": "user",
+        "content": "What is the law regarding admissibility of digital evidence in Pakistan?",
+        "expected_contains": ["evidence", "Qanun-e-Shahadat"],
+        "expected_not_contains": [],
+        "expected_tool": null,
+        "policy_check": "in_scope"
+      }
+    ]
+  },
+  {
+    "id": "conv_09",
+    "description": "Multi-turn context retention",
+    "category": "coherence",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Tell me about Section 302 PPC.",
+        "expected_contains": ["302", "murder"],
+        "expected_not_contains": [],
+        "expected_tool": "statute_lookup",
+        "policy_check": "in_scope"
+      },
+      {
+        "role": "user",
+        "content": "What about the bail provisions for this offense?",
+        "expected_contains": ["bail", "non-bailable"],
+        "expected_not_contains": [],
+        "expected_tool": null,
+        "policy_check": "in_scope"
+      },
+      {
+        "role": "user",
+        "content": "Can you summarize the key points from our discussion so far?",
+        "expected_contains": ["302", "murder"],
+        "expected_not_contains": [],
+        "expected_tool": null,
+        "policy_check": "in_scope"
+      }
+    ]
+  },
+  {
+    "id": "conv_10",
+    "description": "FIR procedure inquiry",
+    "category": "legal_rag",
+    "turns": [
+      {
+        "role": "user",
+        "content": "How do I file an FIR for a robbery case? What sections are applicable?",
+        "expected_contains": ["FIR", "police"],
+        "expected_not_contains": [],
+        "expected_tool": null,
+        "policy_check": "in_scope"
+      }
+    ]
+  },
+  {
+    "id": "conv_11",
+    "description": "Supreme Court precedent search",
+    "category": "legal_rag",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Find Supreme Court judgments about bail in murder cases.",
+        "expected_contains": ["bail", "murder"],
+        "expected_not_contains": [],
+        "expected_tool": "case_search",
+        "policy_check": "in_scope"
+      }
+    ]
+  },
+  {
+    "id": "conv_12",
+    "description": "Mixed RAG + tool — statute lookup with legal context",
+    "category": "mixed",
+    "turns": [
+      {
+        "role": "user",
+        "content": "What does Section 497 CrPC say about bail? Also calculate deadlines if arrest was on 2024-01-10.",
+        "expected_contains": ["bail", "497"],
+        "expected_not_contains": [],
+        "expected_tool": "deadline_calculator",
+        "policy_check": "in_scope"
+      }
+    ]
+  }
+]

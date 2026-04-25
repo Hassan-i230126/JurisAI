@@ -1,0 +1,326 @@
+{
+  "1_users": {
+    "concurrent_users": 1,
+    "total_turns": 3,
+    "errors": 0,
+    "wall_time_ms": 388597.93,
+    "turns_per_second": 0.0077,
+    "ttft": {
+      "mean": 30284.88,
+      "median": 25502.84,
+      "p90": 39798.95
+    },
+    "e2e": {
+      "mean": 129529.12,
+      "median": 121739.9,
+      "p90": 193282.6
+    },
+    "user_details": [
+      {
+        "user_id": 0,
+        "turns": [
+          {
+            "turn": 0,
+            "ttft_ms": 25502.84,
+            "e2e_ms": 55679.18,
+            "token_count": 151
+          },
+          {
+            "turn": 1,
+            "ttft_ms": 21978.82,
+            "e2e_ms": 211168.28,
+            "token_count": 1024
+          },
+          {
+            "turn": 2,
+            "ttft_ms": 43372.98,
+            "e2e_ms": 121739.9,
+            "token_count": 422
+          }
+        ]
+      }
+    ]
+  },
+  "2_users": {
+    "concurrent_users": 2,
+    "total_turns": 6,
+    "errors": 0,
+    "wall_time_ms": 588172.39,
+    "turns_per_second": 0.0102,
+    "ttft": {
+      "mean": 114467.13,
+      "median": 98440.64,
+      "p90": 186456.4
+    },
+    "e2e": {
+      "mean": 189682.26,
+      "median": 158199.47,
+      "p90": 300109.95
+    },
+    "user_details": [
+      {
+        "user_id": 0,
+        "turns": [
+          {
+            "turn": 0,
+            "ttft_ms": 53934.19,
+            "e2e_ms": 128493.5,
+            "token_count": 330
+          },
+          {
+            "turn": 1,
+            "ttft_ms": 63074.54,
+            "e2e_ms": 162156.95,
+            "token_count": 466
+          },
+          {
+            "turn": 2,
+            "ttft_ms": 229688.25,
+            "e2e_ms": 259291.86,
+            "token_count": 170
+          }
+        ]
+      },
+      {
+        "user_id": 1,
+        "turns": [
+          {
+            "turn": 0,
+            "ttft_ms": 132225.29,
+            "e2e_ms": 154241.98,
+            "token_count": 106
+          },
+          {
+            "turn": 1,
+            "ttft_ms": 143224.54,
+            "e2e_ms": 340928.03,
+            "token_count": 1024
+          },
+          {
+            "turn": 2,
+            "ttft_ms": 64655.99,
+            "e2e_ms": 92981.25,
+            "token_count": 161
+          }
+        ]
+      }
+    ]
+  },
+  "3_users": {
+    "concurrent_users": 3,
+    "total_turns": 9,
+    "errors": 0,
+    "wall_time_ms": 742460.5,
+    "turns_per_second": 0.0121,
+    "ttft": {
+      "mean": 150104.12,
+      "median": 141156.64,
+      "p90": 243987.13
+    },
+    "e2e": {
+      "mean": 215478.16,
+      "median": 208119.09,
+      "p90": 319852.22
+    },
+    "user_details": [
+      {
+        "user_id": 0,
+        "turns": [
+          {
+            "turn": 0,
+            "ttft_ms": 82268.82,
+            "e2e_ms": 112136.32,
+            "token_count": 158
+          },
+          {
+            "turn": 1,
+            "ttft_ms": 141156.64,
+            "e2e_ms": 208119.09,
+            "token_count": 298
+          },
+          {
+            "turn": 2,
+            "ttft_ms": 255733.53,
+            "e2e_ms": 316178.78,
+            "token_count": 324
+          }
+        ]
+      },
+      {
+        "user_id": 1,
+        "turns": [
+          {
+            "turn": 0,
+            "ttft_ms": 112599.62,
+            "e2e_ms": 141102.54,
+            "token_count": 140
+          },
+          {
+            "turn": 1,
+            "ttft_ms": 187921.48,
+            "e2e_ms": 267872.95,
+            "token_count": 430
+          },
+          {
+            "turn": 2,
+            "ttft_ms": 241050.53,
+            "e2e_ms": 333466.16,
+            "token_count": 448
+          }
+        ]
+      },
+      {
+        "user_id": 2,
+        "turns": [
+          {
+            "turn": 0,
+            "ttft_ms": 45374.18,
+            "e2e_ms": 81480.86,
+            "token_count": 176
+          },
+          {
+            "turn": 1,
+            "ttft_ms": 88874.97,
+            "e2e_ms": 162497.98,
+            "token_count": 344
+          },
+          {
+            "turn": 2,
+            "ttft_ms": 195957.29,
+            "e2e_ms": 316448.73,
+            "token_count": 589
+          }
+        ]
+      }
+    ]
+  },
+  "5_users": {
+    "concurrent_users": 5,
+    "total_turns": 15,
+    "errors": 5,
+    "wall_time_ms": 823247.55,
+    "turns_per_second": 0.0182,
+    "ttft": {
+      "mean": 166232.93,
+      "median": 148894.24,
+      "p90": 273074.7
+    },
+    "e2e": {
+      "mean": 235293.28,
+      "median": 212483.94,
+      "p90": 408986.32
+    },
+    "user_details": [
+      {
+        "user_id": 0,
+        "turns": [
+          {
+            "turn": 0,
+            "ttft_ms": 135264.28,
+            "e2e_ms": 162361.3,
+            "token_count": 159
+          },
+          {
+            "turn": 1,
+            "error": "",
+            "e2e_ms": 300418.39504241943
+          },
+          {
+            "turn": 2,
+            "error": "",
+            "e2e_ms": 300684.867143631
+          }
+        ]
+      },
+      {
+        "user_id": 1,
+        "turns": [
+          {
+            "turn": 0,
+            "ttft_ms": 104102.69,
+            "e2e_ms": 135063.09,
+            "token_count": 181
+          },
+          {
+            "turn": 1,
+            "ttft_ms": 272538.15,
+            "e2e_ms": 442412.42,
+            "token_count": 1024
+          },
+          {
+            "turn": 2,
+            "ttft_ms": 217748.21,
+            "e2e_ms": 245738.34,
+            "token_count": 161
+          }
+        ]
+      },
+      {
+        "user_id": 2,
+        "turns": [
+          {
+            "turn": 0,
+            "ttft_ms": 83972.48,
+            "e2e_ms": 103887.07,
+            "token_count": 117
+          },
+          {
+            "turn": 1,
+            "ttft_ms": 277903.6,
+            "e2e_ms": 300310.05,
+            "token_count": 145
+          },
+          {
+            "turn": 2,
+            "error": "",
+            "e2e_ms": 300470.6130027771
+          }
+        ]
+      },
+      {
+        "user_id": 3,
+        "turns": [
+          {
+            "turn": 0,
+            "ttft_ms": 162524.21,
+            "e2e_ms": 179229.54,
+            "token_count": 98
+          },
+          {
+            "turn": 1,
+            "error": "",
+            "e2e_ms": 300327.2080421448
+          },
+          {
+            "turn": 2,
+            "error": "",
+            "e2e_ms": 300379.9126148224
+          }
+        ]
+      },
+      {
+        "user_id": 4,
+        "turns": [
+          {
+            "turn": 0,
+            "ttft_ms": 59977.66,
+            "e2e_ms": 83451.71,
+            "token_count": 121
+          },
+          {
+            "turn": 1,
+            "ttft_ms": 121655.47,
+            "e2e_ms": 295206.95,
+            "token_count": 1024
+          },
+          {
+            "turn": 2,
+            "ttft_ms": 226642.51,
+            "e2e_ms": 405272.31,
+            "token_count": 1024
+          }
+        ]
+      }
+    ]
+  }
+}

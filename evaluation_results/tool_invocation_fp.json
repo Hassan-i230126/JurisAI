@@ -1,0 +1,42 @@
+{
+  "total": 5,
+  "false_positive_count": 0,
+  "false_positive_rate": 0.0,
+  "details": [
+    {
+      "id": "fp_01",
+      "prompt": "Hello, how are you?",
+      "expected_tool": null,
+      "detected_tool": null,
+      "false_positive": false
+    },
+    {
+      "id": "fp_02",
+      "prompt": "What is the general legal system of Pakistan?",
+      "expected_tool": null,
+      "detected_tool": null,
+      "false_positive": false
+    },
+    {
+      "id": "fp_03",
+      "prompt": "Thank you for your help, goodbye.",
+      "expected_tool": null,
+      "detected_tool": null,
+      "false_positive": false
+    },
+    {
+      "id": "fp_04",
+      "prompt": "Explain the difference between civil and criminal law.",
+      "expected_tool": null,
+      "detected_tool": null,
+      "false_positive": false
+    },
+    {
+      "id": "fp_05",
+      "prompt": "Who is the Chief Justice of Pakistan?",
+      "expected_tool": null,
+      "detected_tool": null,
+      "false_positive": false
+    }
+  ]
+}

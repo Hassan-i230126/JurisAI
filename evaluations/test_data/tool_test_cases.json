@@ -1,0 +1,188 @@
+{
+  "tool_invocation_tests": [
+    {
+      "id": "tool_01",
+      "prompt": "What is Section 302 of PPC?",
+      "expected_tool": "statute_lookup",
+      "expected_args_contain": {"section_number": "302", "act": "PPC"}
+    },
+    {
+      "id": "tool_02",
+      "prompt": "Look up Section 379 PPC",
+      "expected_tool": "statute_lookup",
+      "expected_args_contain": {"section_number": "379", "act": "PPC"}
+    },
+    {
+      "id": "tool_03",
+      "prompt": "What does Section 497 of the Code of Criminal Procedure say?",
+      "expected_tool": "statute_lookup",
+      "expected_args_contain": {"section_number": "497", "act": "CrPC"}
+    },
+    {
+      "id": "tool_04",
+      "prompt": "My client was arrested on 2024-03-15. What are the deadlines?",
+      "expected_tool": "deadline_calculator",
+      "expected_args_contain": {"trigger_event": "arrest"}
+    },
+    {
+      "id": "tool_05",
+      "prompt": "Calculate the bail application deadline after arrest on 2024-01-10",
+      "expected_tool": "deadline_calculator",
+      "expected_args_contain": {"trigger_event": "arrest"}
+    },
+    {
+      "id": "tool_06",
+      "prompt": "How many days do I have to file an appeal after conviction?",
+      "expected_tool": "deadline_calculator",
+      "expected_args_contain": {}
+    },
+    {
+      "id": "tool_07",
+      "prompt": "Find Supreme Court judgments about bail in murder cases",
+      "expected_tool": "case_search",
+      "expected_args_contain": {}
+    },
+    {
+      "id": "tool_08",
+      "prompt": "Search for Supreme Court ruling on anti-terrorism cases",
+      "expected_tool": "case_search",
+      "expected_args_contain": {}
+    },
+    {
+      "id": "tool_09",
+      "prompt": "What is the precedent for granting bail in narcotics cases?",
+      "expected_tool": "case_search",
+      "expected_args_contain": {}
+    },
+    {
+      "id": "tool_10",
+      "prompt": "Section 420 of Pakistan Penal Code",
+      "expected_tool": "statute_lookup",
+      "expected_args_contain": {"section_number": "420", "act": "PPC"}
+    }
+  ],
+  "false_positive_tests": [
+    {
+      "id": "fp_01",
+      "prompt": "Hello, how are you?",
+      "expected_tool": null
+    },
+    {
+      "id": "fp_02",
+      "prompt": "What is the general legal system of Pakistan?",
+      "expected_tool": null
+    },
+    {
+      "id": "fp_03",
+      "prompt": "Thank you for your help, goodbye.",
+      "expected_tool": null
+    },
+    {
+      "id": "fp_04",
+      "prompt": "Explain the difference between civil and criminal law.",
+      "expected_tool": null
+    },
+    {
+      "id": "fp_05",
+      "prompt": "Who is the Chief Justice of Pakistan?",
+      "expected_tool": null
+    }
+  ],
+  "crm_test_cases": [
+    {
+      "id": "crm_01",
+      "action": "create",
+      "input": {"name": "Test Client Alpha", "cnic": "12345-1234567-1", "contact": "0300-1111111", "case_type": "Murder", "charges": "PPC 302", "bail_status": "in custody"},
+      "expected_success": true
+    },
+    {
+      "id": "crm_02",
+      "action": "get",
+      "input": {"client_id": "_dynamic_"},
+      "expected_success": true,
+      "expected_fields": ["name", "cnic", "contact", "case_type"]
+    },
+    {
+      "id": "crm_03",
+      "action": "update",
+      "input": {"client_id": "_dynamic_", "field": "bail_status", "value": "on bail"},
+      "expected_success": true
+    },
+    {
+      "id": "crm_04",
+      "action": "search",
+      "input": {"query": "Test Client Alpha"},
+      "expected_success": true
+    },
+    {
+      "id": "crm_05",
+      "action": "update",
+      "input": {"client_id": "_dynamic_", "field": "invalid_field", "value": "test"},
+      "expected_success": false
+    },
+    {
+      "id": "crm_06",
+      "action": "get",
+      "input": {"client_id": "nonexistent_id_xyz"},
+      "expected_success": false
+    },
+    {
+      "id": "crm_07",
+      "action": "delete",
+      "input": {"client_id": "_dynamic_"},
+      "expected_success": true
+    }
+  ],
+  "statute_test_cases": [
+    {
+      "id": "stat_01",
+      "input": {"act": "PPC", "section_number": "302"},
+      "expected_success": true,
+      "expected_contains": ["302"]
+    },
+    {
+      "id": "stat_02",
+      "input": {"act": "PPC", "section_number": "379"},
+      "expected_success": true,
+      "expected_contains": ["379"]
+    },
+    {
+      "id": "stat_03",
+      "input": {"act": "PPC", "section_number": "99999"},
+      "expected_success": false
+    },
+    {
+      "id": "stat_04",
+      "input": {"keyword": "murder"},
+      "expected_success": true
+    },
+    {
+      "id": "stat_05",
+      "input": {},
+      "expected_success": false
+    }
+  ],
+  "deadline_test_cases": [
+    {
+      "id": "dl_01",
+      "input": {"trigger_event": "arrest", "event_date": "2024-03-15"},
+      "expected_success": true,
+      "expected_contains": ["deadline", "2024"]
+    },
+    {
+      "id": "dl_02",
+      "input": {"trigger_event": "conviction_order", "event_date": "2024-06-01"},
+      "expected_success": true
+    },
+    {
+      "id": "dl_03",
+      "input": {"trigger_event": "arrest"},
+      "expected_success": true
+    },
+    {
+      "id": "dl_04",
+      "input": {"trigger_event": ""},
+      "expected_success": true
+    }
+  ]
+}

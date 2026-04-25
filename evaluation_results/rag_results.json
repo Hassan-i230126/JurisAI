@@ -1,0 +1,210 @@
+{
+  "total_queries": 25,
+  "avg_precision_at_k": 0.968,
+  "avg_recall_at_k": 0.1713,
+  "avg_context_relevance": 0.808,
+  "avg_retrieval_latency_ms": 200.8,
+  "median_retrieval_latency_ms": 134.1,
+  "details": [
+    {
+      "query": "What is the punishment for murder?",
+      "chunks_retrieved": 5,
+      "precision_at_k": 1.0,
+      "recall_at_k": 0.5,
+      "context_relevance": 1.0,
+      "latency_ms": 1701.0
+    },
+    {
+      "query": "What is robbery under Pakistani law?",
+      "chunks_retrieved": 5,
+      "precision_at_k": 1.0,
+      "recall_at_k": 0.5,
+      "context_relevance": 0.6,
+      "latency_ms": 155.0
+    },
+    {
+      "query": "Punishment for theft in Pakistan",
+      "chunks_retrieved": 5,
+      "precision_at_k": 1.0,
+      "recall_at_k": 0.3333,
+      "context_relevance": 1.0,
+      "latency_ms": 155.2
+    },
+    {
+      "query": "What is kidnapping under PPC?",
+      "chunks_retrieved": 5,
+      "precision_at_k": 1.0,
+      "recall_at_k": 0.75,
+      "context_relevance": 1.0,
+      "latency_ms": 173.7
+    },
+    {
+      "query": "Define culpable homicide in Pakistani criminal law",
+      "chunks_retrieved": 5,
+      "precision_at_k": 1.0,
+      "recall_at_k": 0.0,
+      "context_relevance": 0.4,
+      "latency_ms": 169.8
+    },
+    {
+      "query": "What is the punishment for cheating?",
+      "chunks_retrieved": 5,
+      "precision_at_k": 1.0,
+      "recall_at_k": 0.5,
+      "context_relevance": 0.8,
+      "latency_ms": 160.3
+    },
+    {
+      "query": "Bail provisions for non-bailable offenses",
+      "chunks_retrieved": 5,
+      "precision_at_k": 1.0,
+      "recall_at_k": 0.0,
+      "context_relevance": 1.0,
+      "latency_ms": 144.0
+    },
+    {
+      "query": "Procedure for filing an FIR",
+      "chunks_retrieved": 5,
+      "precision_at_k": 1.0,
+      "recall_at_k": 0.0,
+      "context_relevance": 1.0,
+      "latency_ms": 147.5
+    },
+    {
+      "query": "Rights of an accused person during investigation",
+      "chunks_retrieved": 5,
+      "precision_at_k": 1.0,
+      "recall_at_k": 0.0,
+      "context_relevance": 1.0,
+      "latency_ms": 142.9
+    },
+    {
+      "query": "What is the law on evidence admissibility in Pakistan?",
+      "chunks_retrieved": 5,
+      "precision_at_k": 1.0,
+      "recall_at_k": 0.0,
+      "context_relevance": 0.8,
+      "latency_ms": 161.1
+    },
+    {
+      "query": "Punishment for hurt and grievous hurt",
+      "chunks_retrieved": 5,
+      "precision_at_k": 1.0,
+      "recall_at_k": 0.1667,
+      "context_relevance": 1.0,
+      "latency_ms": 139.1
+    },
+    {
+      "query": "What does the Anti-Terrorism Act cover?",
+      "chunks_retrieved": 5,
+      "precision_at_k": 1.0,
+      "recall_at_k": 0.0,
+      "context_relevance": 1.0,
+      "latency_ms": 126.5
+    },
+    {
+      "query": "Procedure for arrest without warrant",
+      "chunks_retrieved": 5,
+      "precision_at_k": 1.0,
+      "recall_at_k": 0.0,
+      "context_relevance": 1.0,
+      "latency_ms": 123.4
+    },
+    {
+      "query": "What constitutes criminal breach of trust?",
+      "chunks_retrieved": 5,
+      "precision_at_k": 1.0,
+      "recall_at_k": 0.6,
+      "context_relevance": 1.0,
+      "latency_ms": 122.8
+    },
+    {
+      "query": "Defamation under Pakistan Penal Code",
+      "chunks_retrieved": 5,
+      "precision_at_k": 1.0,
+      "recall_at_k": 0.3333,
+      "context_relevance": 0.6,
+      "latency_ms": 131.0
+    },
+    {
+      "query": "Procedure for appeal against conviction",
+      "chunks_retrieved": 5,
+      "precision_at_k": 1.0,
+      "recall_at_k": 0.0,
+      "context_relevance": 1.0,
+      "latency_ms": 134.8
+    },
+    {
+      "query": "What is forgery under Pakistani law?",
+      "chunks_retrieved": 5,
+      "precision_at_k": 1.0,
+      "recall_at_k": 0.2,
+      "context_relevance": 0.2,
+      "latency_ms": 124.1
+    },
+    {
+      "query": "Laws about narcotics and drug trafficking in Pakistan",
+      "chunks_retrieved": 5,
+      "precision_at_k": 1.0,
+      "recall_at_k": 0.0,
+      "context_relevance": 1.0,
+      "latency_ms": 134.1
+    },
+    {
+      "query": "What is the maximum period of remand under CrPC?",
+      "chunks_retrieved": 5,
+      "precision_at_k": 1.0,
+      "recall_at_k": 0.0,
+      "context_relevance": 0.6,
+      "latency_ms": 127.5
+    },
+    {
+      "query": "Supreme Court rulings on bail in murder cases",
+      "chunks_retrieved": 5,
+      "precision_at_k": 0.4,
+      "recall_at_k": 0.0,
+      "context_relevance": 0.8,
+      "latency_ms": 125.5
+    },
+    {
+      "query": "Right to fair trial under Pakistani law",
+      "chunks_retrieved": 5,
+      "precision_at_k": 1.0,
+      "recall_at_k": 0.0,
+      "context_relevance": 0.8,
+      "latency_ms": 123.1
+    },
+    {
+      "query": "Extortion under Pakistan Penal Code",
+      "chunks_retrieved": 5,
+      "precision_at_k": 1.0,
+      "recall_at_k": 0.4,
+      "context_relevance": 0.6,
+      "latency_ms": 122.8
+    },
+    {
+      "query": "What is dacoity under PPC?",
+      "chunks_retrieved": 5,
+      "precision_at_k": 1.0,
+      "recall_at_k": 0.0,
+      "context_relevance": 0.0,
+      "latency_ms": 130.4
+    },
+    {
+      "query": "Diyat and compensation in Pakistani law",
+      "chunks_retrieved": 5,
+      "precision_at_k": 0.8,
+      "recall_at_k": 0.0,
+      "context_relevance": 1.0,
+      "latency_ms": 120.5
+    },
+    {
+      "query": "Zina ordinance in Pakistan",
+      "chunks_retrieved": 5,
+      "precision_at_k": 1.0,
+      "recall_at_k": 0.0,
+      "context_relevance": 1.0,
+      "latency_ms": 123.7
+    }
+  ]
+}

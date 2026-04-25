@@ -1,0 +1,124 @@
+{
+  "total": 10,
+  "tool_accuracy": 1.0,
+  "arg_accuracy": 1.0,
+  "details": [
+    {
+      "id": "tool_01",
+      "prompt": "What is Section 302 of PPC?",
+      "expected_tool": "statute_lookup",
+      "detected_tool": "statute_lookup",
+      "detected_args": {
+        "act": "PPC",
+        "section_number": "302"
+      },
+      "correct_tool": true,
+      "correct_args": true
+    },
+    {
+      "id": "tool_02",
+      "prompt": "Look up Section 379 PPC",
+      "expected_tool": "statute_lookup",
+      "detected_tool": "statute_lookup",
+      "detected_args": {
+        "act": "PPC",
+        "section_number": "379"
+      },
+      "correct_tool": true,
+      "correct_args": true
+    },
+    {
+      "id": "tool_03",
+      "prompt": "What does Section 497 of the Code of Criminal Procedure say?",
+      "expected_tool": "statute_lookup",
+      "detected_tool": "statute_lookup",
+      "detected_args": {
+        "act": "CrPC",
+        "section_number": "497"
+      },
+      "correct_tool": true,
+      "correct_args": true
+    },
+    {
+      "id": "tool_04",
+      "prompt": "My client was arrested on 2024-03-15. What are the deadlines?",
+      "expected_tool": "deadline_calculator",
+      "detected_tool": "deadline_calculator",
+      "detected_args": {
+        "trigger_event": "arrest",
+        "event_date": "2024-03-15"
+      },
+      "correct_tool": true,
+      "correct_args": true
+    },
+    {
+      "id": "tool_05",
+      "prompt": "Calculate the bail application deadline after arrest on 2024-01-10",
+      "expected_tool": "deadline_calculator",
+      "detected_tool": "deadline_calculator",
+      "detected_args": {
+        "trigger_event": "arrest",
+        "event_date": "2024-01-10"
+      },
+      "correct_tool": true,
+      "correct_args": true
+    },
+    {
+      "id": "tool_06",
+      "prompt": "How many days do I have to file an appeal after conviction?",
+      "expected_tool": "deadline_calculator",
+      "detected_tool": "deadline_calculator",
+      "detected_args": {
+        "trigger_event": "conviction_order",
+        "event_date": ""
+      },
+      "correct_tool": true,
+      "correct_args": true
+    },
+    {
+      "id": "tool_07",
+      "prompt": "Find Supreme Court judgments about bail in murder cases",
+      "expected_tool": "case_search",
+      "detected_tool": "case_search",
+      "detected_args": {
+        "query": "Find Supreme Court judgments about bail in murder cases"
+      },
+      "correct_tool": true,
+      "correct_args": true
+    },
+    {
+      "id": "tool_08",
+      "prompt": "Search for Supreme Court ruling on anti-terrorism cases",
+      "expected_tool": "case_search",
+      "detected_tool": "case_search",
+      "detected_args": {
+        "query": "Search for Supreme Court ruling on anti-terrorism cases"
+      },
+      "correct_tool": true,
+      "correct_args": true
+    },
+    {
+      "id": "tool_09",
+      "prompt": "What is the precedent for granting bail in narcotics cases?",
+      "expected_tool": "case_search",
+      "detected_tool": "case_search",
+      "detected_args": {
+        "query": "What is the precedent for granting bail in narcotics cases?"
+      },
+      "correct_tool": true,
+      "correct_args": true
+    },
+    {
+      "id": "tool_10",
+      "prompt": "Section 420 of Pakistan Penal Code",
+      "expected_tool": "statute_lookup",
+      "detected_tool": "statute_lookup",
+      "detected_args": {
+        "act": "PPC",
+        "section_number": "420"
+      },
+      "correct_tool": true,
+      "correct_args": true
+    }
+  ]
+}

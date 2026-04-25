@@ -1,0 +1,414 @@
+{
+  "simple_dialogue": {
+    "scenario": "simple_dialogue",
+    "description": "Simple dialogue — no RAG, no tool",
+    "trials_completed": 10,
+    "ttft": {
+      "mean": 3544.25,
+      "median": 265.6,
+      "p90": 3588.7,
+      "p99": 30064.74
+    },
+    "e2e": {
+      "mean": 4672.67,
+      "median": 270.61,
+      "p90": 4717.05,
+      "p99": 40292.46
+    },
+    "inter_token": {
+      "mean": 15.82,
+      "median": 0.04
+    },
+    "trials": [
+      {
+        "ttft_ms": 33006.52,
+        "e2e_ms": 44245.28,
+        "avg_inter_token_ms": 157.82,
+        "token_count": 71,
+        "trial": 1,
+        "prompt": "Hello, I need legal help."
+      },
+      {
+        "ttft_ms": 320.05,
+        "e2e_ms": 325.03,
+        "avg_inter_token_ms": 0.05,
+        "token_count": 104,
+        "trial": 2,
+        "prompt": "Hi there, good morning."
+      },
+      {
+        "ttft_ms": 257.16,
+        "e2e_ms": 262.27,
+        "avg_inter_token_ms": 0.05,
+        "token_count": 101,
+        "trial": 3,
+        "prompt": "Thank you for your help."
+      },
+      {
+        "ttft_ms": 272.19,
+        "e2e_ms": 276.8,
+        "avg_inter_token_ms": 0.04,
+        "token_count": 104,
+        "trial": 4,
+        "prompt": "Hey, can you assist me?"
+      },
+      {
+        "ttft_ms": 256.25,
+        "e2e_ms": 261.83,
+        "avg_inter_token_ms": 0.05,
+        "token_count": 101,
+        "trial": 5,
+        "prompt": "Good evening, I have a question."
+      },
+      {
+        "ttft_ms": 267.28,
+        "e2e_ms": 271.7,
+        "avg_inter_token_ms": 0.04,
+        "token_count": 101,
+        "trial": 6,
+        "prompt": "Greetings, I need your expertise."
+      },
+      {
+        "ttft_ms": 262.49,
+        "e2e_ms": 266.75,
+        "avg_inter_token_ms": 0.04,
+        "token_count": 104,
+        "trial": 7,
+        "prompt": "Hi, how are you?"
+      },
+      {
+        "ttft_ms": 262.68,
+        "e2e_ms": 267.0,
+        "avg_inter_token_ms": 0.04,
+        "token_count": 104,
+        "trial": 8,
+        "prompt": "Hello Juris AI."
+      },
+      {
+        "ttft_ms": 273.97,
+        "e2e_ms": 280.57,
+        "avg_inter_token_ms": 0.05,
+        "token_count": 137,
+        "trial": 9,
+        "prompt": "Hey, good afternoon."
+      },
+      {
+        "ttft_ms": 263.92,
+        "e2e_ms": 269.52,
+        "avg_inter_token_ms": 0.04,
+        "token_count": 137,
+        "trial": 10,
+        "prompt": "Thanks for the information."
+      }
+    ]
+  },
+  "rag_only": {
+    "scenario": "rag_only",
+    "description": "RAG-only — legal query requiring retrieval",
+    "trials_completed": 10,
+    "ttft": {
+      "mean": 17769.08,
+      "median": 17005.03,
+      "p90": 20732.53,
+      "p99": 21012.77
+    },
+    "e2e": {
+      "mean": 57714.41,
+      "median": 55862.1,
+      "p90": 75417.79,
+      "p99": 78129.78
+    },
+    "inter_token": {
+      "mean": 149.6,
+      "median": 149.56
+    },
+    "trials": [
+      {
+        "ttft_ms": 16390.19,
+        "e2e_ms": 45780.95,
+        "avg_inter_token_ms": 151.35,
+        "token_count": 194,
+        "trial": 1,
+        "prompt": "What is the punishment for murder under PPC?"
+      },
+      {
+        "ttft_ms": 16220.39,
+        "e2e_ms": 56480.77,
+        "avg_inter_token_ms": 145.3,
+        "token_count": 277,
+        "trial": 2,
+        "prompt": "Explain bail provisions for non-bailable offenses."
+      },
+      {
+        "ttft_ms": 17207.75,
+        "e2e_ms": 46377.7,
+        "avg_inter_token_ms": 143.66,
+        "token_count": 203,
+        "trial": 3,
+        "prompt": "What does the Anti-Terrorism Act say about terrorism?"
+      },
+      {
+        "ttft_ms": 15608.18,
+        "e2e_ms": 56596.63,
+        "avg_inter_token_ms": 150.08,
+        "token_count": 273,
+        "trial": 4,
+        "prompt": "How do I file an FIR for a robbery case?"
+      },
+      {
+        "ttft_ms": 16306.34,
+        "e2e_ms": 46959.02,
+        "avg_inter_token_ms": 157.97,
+        "token_count": 194,
+        "trial": 5,
+        "prompt": "What is kidnapping under Pakistani criminal law?"
+      },
+      {
+        "ttft_ms": 20206.01,
+        "e2e_ms": 70376.39,
+        "avg_inter_token_ms": 149.19,
+        "token_count": 336,
+        "trial": 6,
+        "prompt": "Explain culpable homicide under PPC."
+      },
+      {
+        "ttft_ms": 21043.91,
+        "e2e_ms": 78431.11,
+        "avg_inter_token_ms": 149.74,
+        "token_count": 383,
+        "trial": 7,
+        "prompt": "What is the law on digital evidence in Pakistan?"
+      },
+      {
+        "ttft_ms": 16953.18,
+        "e2e_ms": 55243.43,
+        "avg_inter_token_ms": 148.86,
+        "token_count": 257,
+        "trial": 8,
+        "prompt": "What are the rights of an accused during investigation?"
+      },
+      {
+        "ttft_ms": 17056.89,
+        "e2e_ms": 45815.12,
+        "avg_inter_token_ms": 150.45,
+        "token_count": 191,
+        "trial": 9,
+        "prompt": "What is criminal breach of trust under PPC?"
+      },
+      {
+        "ttft_ms": 20697.93,
+        "e2e_ms": 75082.98,
+        "avg_inter_token_ms": 149.37,
+        "token_count": 364,
+        "trial": 10,
+        "prompt": "Explain defamation under Pakistan Penal Code."
+      }
+    ]
+  },
+  "tool_only": {
+    "scenario": "tool_only",
+    "description": "Tool-only — deadline calculation or statute lookup",
+    "trials_completed": 10,
+    "ttft": {
+      "mean": 34378.38,
+      "median": 31688.27,
+      "p90": 44695.01,
+      "p99": 63214.25
+    },
+    "e2e": {
+      "mean": 81734.34,
+      "median": 67800.86,
+      "p90": 145156.91,
+      "p99": 187497.68
+    },
+    "inter_token": {
+      "mean": 162.65,
+      "median": 161.2
+    },
+    "trials": [
+      {
+        "ttft_ms": 65271.94,
+        "e2e_ms": 90285.91,
+        "avg_inter_token_ms": 161.34,
+        "token_count": 155,
+        "trial": 1,
+        "prompt": "What does Section 302 PPC say?"
+      },
+      {
+        "ttft_ms": 24872.99,
+        "e2e_ms": 40322.86,
+        "avg_inter_token_ms": 149.92,
+        "token_count": 103,
+        "trial": 2,
+        "prompt": "Look up Section 379 of the Pakistan Penal Code."
+      },
+      {
+        "ttft_ms": 42408.69,
+        "e2e_ms": 63675.47,
+        "avg_inter_token_ms": 157.18,
+        "token_count": 135,
+        "trial": 3,
+        "prompt": "My client was arrested on 2024-03-15. What are the deadlines?"
+      },
+      {
+        "ttft_ms": 23417.45,
+        "e2e_ms": 192202.21,
+        "avg_inter_token_ms": 164.95,
+        "token_count": 1024,
+        "trial": 4,
+        "prompt": "Section 497 CrPC bail provisions."
+      },
+      {
+        "ttft_ms": 30145.72,
+        "e2e_ms": 36749.86,
+        "avg_inter_token_ms": 161.06,
+        "token_count": 41,
+        "trial": 5,
+        "prompt": "Calculate deadlines after conviction on 2024-06-01."
+      },
+      {
+        "ttft_ms": 25908.93,
+        "e2e_ms": 70327.09,
+        "avg_inter_token_ms": 162.06,
+        "token_count": 274,
+        "trial": 6,
+        "prompt": "Section 420 PPC cheating."
+      },
+      {
+        "ttft_ms": 25327.65,
+        "e2e_ms": 48248.61,
+        "avg_inter_token_ms": 163.49,
+        "token_count": 140,
+        "trial": 7,
+        "prompt": "What does Section 154 CrPC say about FIR?"
+      },
+      {
+        "ttft_ms": 38667.99,
+        "e2e_ms": 66361.15,
+        "avg_inter_token_ms": 159.0,
+        "token_count": 174,
+        "trial": 8,
+        "prompt": "My client was arrested on 2024-01-10. Deadline?"
+      },
+      {
+        "ttft_ms": 33230.82,
+        "e2e_ms": 69240.57,
+        "avg_inter_token_ms": 153.83,
+        "token_count": 234,
+        "trial": 9,
+        "prompt": "Section 302 Pakistan Penal Code punishment."
+      },
+      {
+        "ttft_ms": 34531.66,
+        "e2e_ms": 139929.66,
+        "avg_inter_token_ms": 193.7,
+        "token_count": 544,
+        "trial": 10,
+        "prompt": "Section 392 PPC robbery."
+      }
+    ]
+  },
+  "mixed": {
+    "scenario": "mixed",
+    "description": "Mixed — RAG + tool (legal query with section reference)",
+    "trials_completed": 10,
+    "ttft": {
+      "mean": 30500.78,
+      "median": 26617.77,
+      "p90": 42551.66,
+      "p99": 60565.21
+    },
+    "e2e": {
+      "mean": 102258.19,
+      "median": 95213.95,
+      "p90": 163849.23,
+      "p99": 190790.98
+    },
+    "inter_token": {
+      "mean": 174.29,
+      "median": 159.09
+    },
+    "trials": [
+      {
+        "ttft_ms": 40327.77,
+        "e2e_ms": 96001.67,
+        "avg_inter_token_ms": 159.01,
+        "token_count": 350,
+        "trial": 1,
+        "prompt": "Explain Section 302 PPC and find related Supreme Court judgments on murder."
+      },
+      {
+        "ttft_ms": 20987.96,
+        "e2e_ms": 94426.23,
+        "avg_inter_token_ms": 189.32,
+        "token_count": 388,
+        "trial": 2,
+        "prompt": "What is the bail procedure under Section 497 CrPC? Calculate deadline from arrest on 2024-02-01."
+      },
+      {
+        "ttft_ms": 23237.72,
+        "e2e_ms": 50964.14,
+        "avg_inter_token_ms": 149.04,
+        "token_count": 186,
+        "trial": 3,
+        "prompt": "Section 379 PPC theft — what are the punishments and related precedents?"
+      },
+      {
+        "ttft_ms": 18761.86,
+        "e2e_ms": 47417.48,
+        "avg_inter_token_ms": 145.34,
+        "token_count": 197,
+        "trial": 4,
+        "prompt": "What are the deadlines after arrest and what does Section 167 CrPC say?"
+      },
+      {
+        "ttft_ms": 35777.45,
+        "e2e_ms": 144237.81,
+        "avg_inter_token_ms": 254.75,
+        "token_count": 426,
+        "trial": 5,
+        "prompt": "Find Supreme Court judgments on bail in murder cases under Section 302 PPC."
+      },
+      {
+        "ttft_ms": 28599.72,
+        "e2e_ms": 53127.64,
+        "avg_inter_token_ms": 145.09,
+        "token_count": 169,
+        "trial": 6,
+        "prompt": "Section 420 PPC cheating — punishment and appeal deadline after conviction 2024-05-01."
+      },
+      {
+        "ttft_ms": 24635.82,
+        "e2e_ms": 151818.01,
+        "avg_inter_token_ms": 225.12,
+        "token_count": 565,
+        "trial": 7,
+        "prompt": "Explain Section 392 PPC robbery and find Supreme Court precedents."
+      },
+      {
+        "ttft_ms": 19226.15,
+        "e2e_ms": 30281.32,
+        "avg_inter_token_ms": 147.26,
+        "token_count": 75,
+        "trial": 8,
+        "prompt": "What does Section 154 CrPC say? How many days to file challan after arrest on 2024-04-01?"
+      },
+      {
+        "ttft_ms": 30886.63,
+        "e2e_ms": 193784.51,
+        "avg_inter_token_ms": 159.18,
+        "token_count": 1024,
+        "trial": 9,
+        "prompt": "Section 302 PPC murder — bail provisions and deadlines after arrest 2024-03-01."
+      },
+      {
+        "ttft_ms": 62566.72,
+        "e2e_ms": 160523.09,
+        "avg_inter_token_ms": 168.82,
+        "token_count": 580,
+        "trial": 10,
+        "prompt": "Anti-terrorism act provisions and Supreme Court judgment on terrorism conviction appeal."
+      }
+    ]
+  }
+}

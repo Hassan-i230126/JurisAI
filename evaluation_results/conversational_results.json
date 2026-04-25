@@ -1,0 +1,340 @@
+{
+  "total_conversations": 12,
+  "task_completion_rate": 0.9167,
+  "policy_adherence_rate": 1.0,
+  "details": [
+    {
+      "id": "conv_01",
+      "description": "Simple greeting — no RAG, no tool",
+      "category": "greeting",
+      "turns": [
+        {
+          "turn_idx": 0,
+          "user": "Hello, I need help with a legal matter.",
+          "response_preview": "Of course! I'm Juris AI and I'll do my best to assist you within the scope of Pakistani criminal law.\n\nPlease provide me details about your specific query or concern so that we can proceed accordingly",
+          "contains_pass": true,
+          "not_contains_pass": true,
+          "policy_pass": true,
+          "tool_match": true,
+          "expected_tool": null,
+          "detected_tools": [],
+          "rag_used": true,
+          "ttft_ms": 56066.5,
+          "e2e_ms": 66604.3
+        }
+      ],
+      "task_completed": true,
+      "policy_adhered": true
+    },
+    {
+      "id": "conv_02",
+      "description": "Out-of-domain rejection — sports query",
+      "category": "out_of_domain",
+      "turns": [
+        {
+          "turn_idx": 0,
+          "user": "Who won the cricket World Cup in 2023?",
+          "response_preview": "I am Juris AI, a specialized legal assistant for Pakistani criminal law. This query is out of my scope and I cannot assist with it.\n\nIf your question pertains to an event related directly to Pakistan'",
+          "contains_pass": true,
+          "not_contains_pass": true,
+          "policy_pass": true,
+          "tool_match": true,
+          "expected_tool": null,
+          "detected_tools": [],
+          "rag_used": false,
+          "ttft_ms": 1224.1,
+          "e2e_ms": 11257.9
+        }
+      ],
+      "task_completed": true,
+      "policy_adhered": true
+    },
+    {
+      "id": "conv_03",
+      "description": "Out-of-domain rejection — foreign law",
+      "category": "out_of_domain",
+      "turns": [
+        {
+          "turn_idx": 0,
+          "user": "Explain the First Amendment of the US Constitution.",
+          "response_preview": "I am Juris AI, a specialized legal assistant for Pakistani criminal law. This query is out of my scope as it pertains to American constitutional law and not Pakistan's jurisdiction or its laws such as",
+          "contains_pass": true,
+          "not_contains_pass": true,
+          "policy_pass": true,
+          "tool_match": true,
+          "expected_tool": null,
+          "detected_tools": [],
+          "rag_used": true,
+          "ttft_ms": 22534.5,
+          "e2e_ms": 34756.4
+        }
+      ],
+      "task_completed": true,
+      "policy_adhered": true
+    },
+    {
+      "id": "conv_04",
+      "description": "Murder charge legal query — RAG expected",
+      "category": "legal_rag",
+      "turns": [
+        {
+          "turn_idx": 0,
+          "user": "What is the punishment for murder under Section 302 PPC?",
+          "response_preview": "**PPC Section 302 Punishment:**\n\nUnder Section [Section Number] of the Pakistan Penal Code, whoever commits qatl-i-amd shall:\n\n1. Be punished with death if it falls within Islamic injunctions.\n2. If n",
+          "contains_pass": true,
+          "not_contains_pass": true,
+          "policy_pass": true,
+          "tool_match": true,
+          "expected_tool": "statute_lookup",
+          "detected_tools": [
+            "statute_lookup"
+          ],
+          "rag_used": true,
+          "ttft_ms": 38459.2,
+          "e2e_ms": 61371.9
+        }
+      ],
+      "task_completed": true,
+      "policy_adhered": true
+    },
+    {
+      "id": "conv_05",
+      "description": "Bail procedures after arrest — multi-turn",
+      "category": "legal_rag",
+      "turns": [
+        {
+          "turn_idx": 0,
+          "user": "My client was arrested for theft under Section 379 PPC. What should I do first?",
+          "response_preview": "1. Review the FIR and any accompanying documents related to your client's arrest.\n2. Gather evidence that supports an alibi proving you cannot have been present at the time of committing the alleged c",
+          "contains_pass": true,
+          "not_contains_pass": true,
+          "policy_pass": true,
+          "tool_match": true,
+          "expected_tool": null,
+          "detected_tools": [
+            "statute_lookup"
+          ],
+          "rag_used": true,
+          "ttft_ms": 17870.6,
+          "e2e_ms": 34333.4
+        },
+        {
+          "turn_idx": 1,
+          "user": "What are the deadlines I need to be aware of?",
+          "response_preview": "Based on your client's arrest date and assuming today's is April 25th (2026), here are some relevant legal timelines under Pakistani criminal law that you should consider:\n\n\n📅 Police must submit chall",
+          "contains_pass": true,
+          "not_contains_pass": true,
+          "policy_pass": true,
+          "tool_match": true,
+          "expected_tool": "deadline_calculator",
+          "detected_tools": [
+            "deadline_calculator"
+          ],
+          "rag_used": true,
+          "ttft_ms": 39314.8,
+          "e2e_ms": 108029.0
+        }
+      ],
+      "task_completed": true,
+      "policy_adhered": true
+    },
+    {
+      "id": "conv_06",
+      "description": "Deadline calculation with specific date",
+      "category": "tool_only",
+      "turns": [
+        {
+          "turn_idx": 0,
+          "user": "My client was arrested on 2024-03-15. What are the legal deadlines?",
+          "response_preview": "Based on your client's arrest date of March 15th, 2024:\n\n1. Police must submit challan/investigation report: Due by April 8th (14 days from trigger) — Authority: CrPC Section 173\n2. Bail application t",
+          "contains_pass": true,
+          "not_contains_pass": true,
+          "policy_pass": true,
+          "tool_match": true,
+          "expected_tool": "deadline_calculator",
+          "detected_tools": [
+            "deadline_calculator"
+          ],
+          "rag_used": true,
+          "ttft_ms": 38688.7,
+          "e2e_ms": 71695.9
+        }
+      ],
+      "task_completed": true,
+      "policy_adhered": true
+    },
+    {
+      "id": "conv_07",
+      "description": "Anti-Terrorism Act query — RAG expected",
+      "category": "legal_rag",
+      "turns": [
+        {
+          "turn_idx": 0,
+          "user": "What does the Anti-Terrorism Act 1997 say about terrorism financing?",
+          "response_preview": "Under Section [Unknown], specifically referring to Sections related to \"Terrorism\" and possibly sections under Chapter II (Offences) within The Antiterrorism Act, 1997:\n\nThe Anti-Terrorism Act of Paki",
+          "contains_pass": true,
+          "not_contains_pass": true,
+          "policy_pass": true,
+          "tool_match": true,
+          "expected_tool": null,
+          "detected_tools": [],
+          "rag_used": true,
+          "ttft_ms": 18664.8,
+          "e2e_ms": 56292.2
+        }
+      ],
+      "task_completed": true,
+      "policy_adhered": true
+    },
+    {
+      "id": "conv_08",
+      "description": "Evidence law query — QSO",
+      "category": "legal_rag",
+      "turns": [
+        {
+          "turn_idx": 0,
+          "user": "What is the law regarding admissibility of digital evidence in Pakistan?",
+          "response_preview": "Under Section [Unknown Act] (statute), numbers, bar codes, or identifiers which shall be deemed to bear electronic signatures and are used for un-authorised use may result in imprisonment up to four y",
+          "contains_pass": true,
+          "not_contains_pass": true,
+          "policy_pass": true,
+          "tool_match": true,
+          "expected_tool": null,
+          "detected_tools": [],
+          "rag_used": true,
+          "ttft_ms": 15449.0,
+          "e2e_ms": 49010.6
+        }
+      ],
+      "task_completed": true,
+      "policy_adhered": true
+    },
+    {
+      "id": "conv_09",
+      "description": "Multi-turn context retention",
+      "category": "coherence",
+      "turns": [
+        {
+          "turn_idx": 0,
+          "user": "Tell me about Section 302 PPC.",
+          "response_preview": "**PPC Section 302 - Punishment for Murder**\n\nUnder Section [Section Number] of the Pakistan Penal Code, qatl-i-amd is defined with specific punishments:\n\n1. Death Penalty: The offender shall face deat",
+          "contains_pass": true,
+          "not_contains_pass": true,
+          "policy_pass": true,
+          "tool_match": true,
+          "expected_tool": "statute_lookup",
+          "detected_tools": [
+            "statute_lookup"
+          ],
+          "rag_used": true,
+          "ttft_ms": 51743.4,
+          "e2e_ms": 75321.0
+        },
+        {
+          "turn_idx": 1,
+          "user": "What about the bail provisions for this offense?",
+          "response_preview": "**Bail Provisions under Section 302 PPC**\n\nUnder Pakistani criminal law:\n\n1. **Substantial Grounds to Refuse Bail:**\n    a) The accused may fail to surrender custody.\n    b) There is substantial groun",
+          "contains_pass": false,
+          "not_contains_pass": true,
+          "policy_pass": true,
+          "tool_match": true,
+          "expected_tool": null,
+          "detected_tools": [],
+          "rag_used": true,
+          "ttft_ms": 21902.7,
+          "e2e_ms": 78604.6
+        },
+        {
+          "turn_idx": 2,
+          "user": "Can you summarize the key points from our discussion so far?",
+          "response_preview": "**Summary of Key Points: PPC Section 302 and Bail Provisions in Pakistan Criminal Law**\n\n1. *PPC Section 302*:\n    a) Defines qatl-i-amd (murder).\n    b) Prescribes punishment as death, life imprisonm",
+          "contains_pass": true,
+          "not_contains_pass": true,
+          "policy_pass": true,
+          "tool_match": true,
+          "expected_tool": null,
+          "detected_tools": [],
+          "rag_used": false,
+          "ttft_ms": 11834.4,
+          "e2e_ms": 41037.2
+        }
+      ],
+      "task_completed": false,
+      "policy_adhered": true
+    },
+    {
+      "id": "conv_10",
+      "description": "FIR procedure inquiry",
+      "category": "legal_rag",
+      "turns": [
+        {
+          "turn_idx": 0,
+          "user": "How do I file an FIR for a robbery case? What sections are applicable?",
+          "response_preview": "To file an FIR in Pakistan, you should follow these steps:\n\n**Procedure:**\n\n1. **Visit the Nearest Police Station:** Go to any police station where such incidents can be registered.\n\n2. **Provide Deta",
+          "contains_pass": true,
+          "not_contains_pass": true,
+          "policy_pass": true,
+          "tool_match": true,
+          "expected_tool": null,
+          "detected_tools": [],
+          "rag_used": true,
+          "ttft_ms": 22609.0,
+          "e2e_ms": 80667.4
+        }
+      ],
+      "task_completed": true,
+      "policy_adhered": true
+    },
+    {
+      "id": "conv_11",
+      "description": "Supreme Court precedent search",
+      "category": "legal_rag",
+      "turns": [
+        {
+          "turn_idx": 0,
+          "user": "Find Supreme Court judgments about bail in murder cases.",
+          "response_preview": "<tool_call>\n{\"tool\": \"case_search\", \"arguments\": {\"query\": \"bail in murder cases\"}}\n</tool_call>",
+          "contains_pass": true,
+          "not_contains_pass": true,
+          "policy_pass": true,
+          "tool_match": true,
+          "expected_tool": "case_search",
+          "detected_tools": [
+            "case_search"
+          ],
+          "rag_used": true,
+          "ttft_ms": 52766.5,
+          "e2e_ms": 57127.7
+        }
+      ],
+      "task_completed": true,
+      "policy_adhered": true
+    },
+    {
+      "id": "conv_12",
+      "description": "Mixed RAG + tool — statute lookup with legal context",
+      "category": "mixed",
+      "turns": [
+        {
+          "turn_idx": 0,
+          "user": "What does Section 497 CrPC say about bail? Also calculate deadlines if arrest was on 2024-01-10.",
+          "response_preview": "Section 497 Code of Criminal Procedure (CrPC), 1898 states that there is an unambiguous bar against the grant of bail to any accused person who has been guilty or could be believed as having committed",
+          "contains_pass": true,
+          "not_contains_pass": true,
+          "policy_pass": true,
+          "tool_match": true,
+          "expected_tool": "deadline_calculator",
+          "detected_tools": [
+            "deadline_calculator",
+            "statute_lookup"
+          ],
+          "rag_used": true,
+          "ttft_ms": 17053.5,
+          "e2e_ms": 92010.9
+        }
+      ],
+      "task_completed": true,
+      "policy_adhered": true
+    }
+  ]
+}
