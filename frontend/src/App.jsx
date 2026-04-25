@@ -59,6 +59,7 @@ export default function App() {
     setIsVoiceEnabled,
     resetSpeech,
     switchClient,
+    loadClientHistory,
   } = useChat()
 
   const handleToggleVoice = useCallback(() => {
@@ -138,12 +139,20 @@ export default function App() {
   const handleClientLoaded = useCallback((client) => {
     setCurrentClient(client)
     switchClient(client?.client_id)
-  }, [switchClient])
+    // Eagerly load and display existing chat history for this client
+    if (client?.client_id) {
+      loadClientHistory(client.client_id)
+    }
+  }, [switchClient, loadClientHistory])
 
   const handleClientCreated = useCallback((client) => {
     setCurrentClient(client)
     switchClient(client?.client_id)
-  }, [switchClient])
+    // New clients have no history, but call for consistency
+    if (client?.client_id) {
+      loadClientHistory(client.client_id)
+    }
+  }, [switchClient, loadClientHistory])
 
   const handleClientClear = useCallback(() => {
     setCurrentClient(null)

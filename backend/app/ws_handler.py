@@ -182,20 +182,31 @@ async def _handle_session_init(
     """Handle session initialization with optional client loading."""
     client_id = data.get("client_id")
     client_loaded = False
+    history_data = []
 
     if client_id:
         conv_manager.client_id = client_id
         client_loaded = await conv_manager.initialize()
+        
+        # Format history to send to client
+        for msg in conv_manager.history:
+            history_data.append({
+                "role": msg.role,
+                "content": msg.content,
+                "timestamp": msg.timestamp,
+                "metadata": msg.metadata
+            })
 
     await manager.send_message(session_id, {
         "type": "session_ready",
         "session_id": session_id,
         "client_loaded": client_loaded,
+        "history": history_data,
     })
 
     logger.info(
-        "Session initialized | session={} | client_loaded={}",
-        session_id, client_loaded
+        "Session initialized | session={} | client_loaded={} | history_size={}",
+        session_id, client_loaded, len(history_data)
     )
 
 

@@ -36,7 +36,7 @@ class LegalRetriever:
 
     def __init__(self, collection=None):
         """
-        Initialize the retriever.
+        Initialize the retriever and eagerly load the embedding model.
         
         Args:
             collection: Pre-initialized ChromaDB collection.
@@ -53,6 +53,15 @@ class LegalRetriever:
 
         self.embedding_cache = LRUCache()
         self._embedding_timeout = httpx.Timeout(connect=2.0, read=30.0, write=30.0, pool=10.0)
+
+        # ─ Eagerly load the SentenceTransformer model at startup. ──────────────────────
+        # This eliminates the 5-8 second cold-start penalty on the first query.
+        # The model is loaded once and reused for every subsequent embedding.
+        from sentence_transformers import SentenceTransformer
+        logger.info("Pre-loading SentenceTransformers model: {}", EMBEDDING_MODEL)
+        self._st_model = SentenceTransformer(EMBEDDING_MODEL)
+        logger.info("SentenceTransformers model loaded and ready.")
+
         logger.info(
             "LegalRetriever initialized | collection={} | docs={}",
             CHROMA_COLLECTION_NAME, self.collection.count()
@@ -61,27 +70,13 @@ class LegalRetriever:
     async def embed_query(self, text: str) -> List[float]:
         """
         Generate an embedding for a query text using SentenceTransformers.
-        
-        Checks the LRU cache first. If not cached, calls the local ST model
-        in a thread executor to avoid blocking the event loop.
-        
-        Args:
-            text: The query text to embed.
-            
-        Returns:
-            The embedding vector as a list of floats.
+        Checks the LRU cache first. The model is pre-loaded at __init__ time.
         """
         # Check cache first
         cached = self.embedding_cache.get(text)
         if cached is not None:
             logger.debug("Embedding cache hit for query: {}...", text[:50])
             return cached
-
-        # Lazy load the HuggingFace model once
-        if not hasattr(self, '_st_model'):
-            from sentence_transformers import SentenceTransformer
-            logger.info("Loading SentenceTransformers model: {}", EMBEDDING_MODEL)
-            self._st_model = SentenceTransformer(EMBEDDING_MODEL)
 
         # Sanitize text
         cln = re.sub(r'[\x00-\x08\x0b\x0c\x0e-\x1f]', '', str(text))
@@ -91,22 +86,20 @@ class LegalRetriever:
         # Run encoding in a thread to keep the async loop free
         loop = asyncio.get_running_loop()
         embedding_array = await loop.run_in_executor(
-            None, 
+            None,
             lambda: self._st_model.encode([safe_text], show_progress_bar=False, normalize_embeddings=True)
         )
-        
+
         embedding = embedding_array[0].tolist()
 
         if not embedding:
             raise RuntimeError("Embedding response missing 'embedding' field")
 
-        import math
         if any((not math.isfinite(float(x))) for x in embedding):
             raise RuntimeError("Embedding vector contains non-finite values")
 
         # Cache the result
         self.embedding_cache.put(text, embedding)
-
         return embedding
 
     async def retrieve(

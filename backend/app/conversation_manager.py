@@ -3,14 +3,17 @@ Juris AI — Conversation Manager
 Central orchestration brain: routes queries through RAG, tools, and LLM.
 """
 
+import asyncio
+import os
 import json
 import random
 import time
 from typing import AsyncGenerator, List, Optional, Dict, Any
+from pathlib import Path
 
 from loguru import logger
 
-from app.config import MAX_HISTORY_TURNS
+from app.config import MAX_HISTORY_TURNS, CHAT_HISTORY_DIR
 from app.models.schemas import Message, RetrievedChunk
 from app.rag.retriever import LegalRetriever
 from app.tools.orchestrator import ToolOrchestrator
@@ -69,7 +72,8 @@ class ConversationManager:
     async def initialize(self) -> bool:
         """
         Initialize the session, loading client profile if specified.
-        
+        Also loads the user's previously saved chat history.
+
         Returns:
             True if a client was successfully loaded.
         """
@@ -77,6 +81,7 @@ class ConversationManager:
             context = await self.crm.get_client_context(self.client_id)
             if context:
                 self._client_context = context
+                self._load_history()
                 logger.info(
                     "Session {} initialized with client {}",
                     self.session_id, self.client_id
@@ -116,14 +121,35 @@ class ConversationManager:
         # Step 1: Save user message to history
         self.history.append(Message(role="user", content=user_message))
 
-        # Step 2: Routing decision
-        if self.client_id:
-            context = await self.crm.get_client_context(self.client_id)
-            if context:
-                self._client_context = context
+        # Step 2 + 3 (concurrent): Fetch CRM client context AND run RAG retrieval
+        # at the same time — these are independent I/O operations.
+        is_legal = is_legal_question(user_message)
+        is_greet = is_greeting(user_message)
 
-        if is_greeting(user_message) and not is_legal_question(user_message) and not self._client_context:
-            # Greeting/chitchat — respond directly without RAG or tools (only if no client context)
+        async def _fetch_client_context():
+            if self.client_id:
+                ctx = await self.crm.get_client_context(self.client_id)
+                if ctx:
+                    self._client_context = ctx
+
+        async def _run_rag():
+            if not is_legal:
+                return []
+            try:
+                chunks = await self.retriever.retrieve(user_message, top_k=3)
+                return chunks
+            except Exception as e:
+                logger.error("RAG retrieval failed: {}", str(e))
+                return []
+
+        # Run both concurrently
+        _, retrieved_chunks = await asyncio.gather(
+            _fetch_client_context(),
+            _run_rag(),
+        )
+
+        # Greeting short-circuit (after context fetch so we know if client loaded)
+        if is_greet and not is_legal and not self._client_context:
             greeting = random.choice(GREETING_RESPONSES)
             self.history.append(Message(role="assistant", content=greeting))
 
@@ -138,31 +164,20 @@ class ConversationManager:
             }
             return
 
-        # Step 3: RAG Retrieval
         rag_found_nothing = False
-        retrieved_chunks: List[RetrievedChunk] = []
-
-        if is_legal_question(user_message):
-            try:
-                retrieved_chunks = await self.retriever.retrieve(
-                    user_message, top_k=3
-                )
-                if retrieved_chunks:
-                    self._rag_used_in_turn = True
-                    self._citations_in_turn = [c.citation for c in retrieved_chunks]
-
-                    yield {
-                        "type": "rag_retrieved",
-                        "count": len(retrieved_chunks),
-                        "citations": self._citations_in_turn,
-                    }
-                else:
-                    rag_found_nothing = True
-            except Exception as e:
-                logger.error("RAG retrieval failed: {}", str(e))
+        if is_legal:
+            if retrieved_chunks:
+                self._rag_used_in_turn = True
+                self._citations_in_turn = [c.citation for c in retrieved_chunks]
+                yield {
+                    "type": "rag_retrieved",
+                    "count": len(retrieved_chunks),
+                    "citations": self._citations_in_turn,
+                }
+            else:
                 rag_found_nothing = True
 
-        # Step 4: Tool Detection
+        # Step 4: Tool Detection (sync keyword match — negligible cost)
         tool_result_text: Optional[str] = None
 
         tool_call = self.tool_orchestrator.detect_tool_from_message(user_message)
@@ -259,8 +274,9 @@ class ConversationManager:
             }
         ))
 
-        # Step 9: Trim history to MAX_HISTORY_TURNS pairs
+        # Step 9: Trim history to MAX_HISTORY_TURNS pairs and save
         self._trim_history()
+        self._save_history()
 
         # Log interaction if client is loaded
         if self.client_id:
@@ -319,13 +335,12 @@ class ConversationManager:
         if self._client_context:
             system_content += f"\n\n{self._client_context}"
 
-        # 3. Legal context from RAG
+        # 3. Legal context from RAG — keep chunks tight to minimise prefill time
         if retrieved_chunks:
             context_parts = []
             for chunk in retrieved_chunks:
-                # Truncate each chunk to 500 characters
-                truncated = chunk.text[:500]
-                context_parts.append(chunk.to_context_string()[:600])
+                # 300 chars per chunk is sufficient for the LLM to extract key facts
+                context_parts.append(chunk.to_context_string()[:350])
 
             legal_context = "\n\n".join(context_parts)
             system_content += f"\n\n[LEGAL CONTEXT]\n{legal_context}"
@@ -341,13 +356,15 @@ class ConversationManager:
         messages.append({"role": "system", "content": system_content})
 
         # 5. Conversation history (last MAX_HISTORY_TURNS * 2 messages)
+        # Truncate each historical message to keep total token count low.
         max_msgs = MAX_HISTORY_TURNS * 2
         history_msgs = self.history[:-1]  # Exclude the current user message
         if len(history_msgs) > max_msgs:
             history_msgs = history_msgs[-max_msgs:]
 
         for msg in history_msgs:
-            messages.append({"role": msg.role, "content": msg.content})
+            # Cap history message length to avoid runaway context growth
+            messages.append({"role": msg.role, "content": msg.content[:400]})
 
         # 6. Current user message
         messages.append({"role": "user", "content": user_message})
@@ -364,3 +381,52 @@ class ConversationManager:
         if len(self.history) > max_messages:
             overflow = len(self.history) - max_messages
             self.history = self.history[overflow:]
+
+    def _get_history_file_path(self) -> Optional[Path]:
+        """Get the file path for saving client chat history."""
+        if not self.client_id:
+            return None
+        return Path(CHAT_HISTORY_DIR) / f"{self.client_id}_history.json"
+
+    def _save_history(self) -> None:
+        """Save the current conversation history to a local JSON file for the client."""
+        path = self._get_history_file_path()
+        if not path:
+            return
+        try:
+            history_data = [
+                {
+                    "role": msg.role,
+                    "content": msg.content,
+                    "timestamp": msg.timestamp,
+                    "metadata": msg.metadata
+                }
+                for msg in self.history
+            ]
+            path.write_text(json.dumps(history_data, indent=2), encoding="utf-8")
+        except Exception as e:
+            logger.error(f"Failed to save chat history for client {self.client_id}: {e}")
+
+    def _load_history(self) -> None:
+        """Load conversation history from a local JSON file, if it exists."""
+        path = self._get_history_file_path()
+        if not path or not path.exists():
+            self.history = []
+            return
+        
+        try:
+            data = json.loads(path.read_text(encoding="utf-8"))
+            self.history = [
+                Message(
+                    role=item["role"],
+                    content=item["content"],
+                    timestamp=item["timestamp"],
+                    metadata=item.get("metadata", {})
+                )
+                for item in data
+            ]
+            self._trim_history()
+            logger.info("Loaded {} previous messages for client {}", len(self.history), self.client_id)
+        except Exception as e:
+            logger.error(f"Failed to load chat history for client {self.client_id}: {e}")
+            self.history = []

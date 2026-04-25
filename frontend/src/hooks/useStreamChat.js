@@ -113,8 +113,10 @@ export function useStreamChat({ handlers = {} }) {
 
   const sendUserMessage = useCallback(
     async ({ sessionId, message, clientId = null }) => {
-      const isOnline = await checkServerHealth()
-      if (!isOnline) {
+      // Status is maintained by the background health poll (every 5s).
+      // Skip the redundant pre-send health check to eliminate the
+      // extra HTTP round-trip before streaming begins.
+      if (status === 'offline') {
         handlersRef.current.onErrorMessage?.({
           type: 'error',
           message: 'Server Offline: local Ollama/LLM is unavailable.',
@@ -232,7 +234,7 @@ export function useStreamChat({ handlers = {} }) {
         }
       }
     },
-    [checkServerHealth, dispatchByType],
+    [status, dispatchByType],
   )
 
   return {

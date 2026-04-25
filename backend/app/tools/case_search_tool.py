@@ -85,16 +85,17 @@ class CaseSearchTool(ToolBase):
                 where_filter["year"] = year_filter
 
             # Perform semantic search using ChromaDB
-            # We need to embed the query first using Ollama
-            import ollama as ollama_client
+            # We need to embed the query first using SentenceTransformers instead of Ollama
+            from sentence_transformers import SentenceTransformer
+            from app.config import EMBEDDING_MODEL
 
-            # Generate embedding in a thread to avoid blocking
             loop = asyncio.get_event_loop()
-            embedding_response = await loop.run_in_executor(
-                None,
-                lambda: ollama_client.embeddings(model="bge-m3", prompt=query)
-            )
-            query_embedding = embedding_response["embedding"]
+            def _encode_query():
+                if not hasattr(self, '_st_model'):
+                    self._st_model = SentenceTransformer(EMBEDDING_MODEL)
+                return self._st_model.encode([query], show_progress_bar=False, normalize_embeddings=True)[0].tolist()
+
+            query_embedding = await loop.run_in_executor(None, _encode_query)
 
             # Query ChromaDB
             results = self.collection.query(

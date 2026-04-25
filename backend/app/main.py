@@ -95,6 +95,17 @@ async def lifespan(app: FastAPI):
     # ── Startup ───────────────────────────────────────────────────────────
     _start_time = time.time()
 
+    # Mute Uvicorn's health check logs
+    import logging
+    class HealthCheckFilter(logging.Filter):
+        def filter(self, record: logging.LogRecord) -> bool:
+            return record.getMessage().find("/api/health") == -1 and record.getMessage().find("/health") == -1
+            
+    logging.getLogger("uvicorn.access").addFilter(HealthCheckFilter())
+
+    # 1. Initialize logger
+    setup_logger()
+
     # 1. Initialize logger
     setup_logger()
     logger.info("╔══════════════════════════════════════════════╗")
@@ -282,10 +293,20 @@ async def chat_stream(payload: ChatStreamRequest, request: Request):
     async def event_stream():
         async with session_lock:
             try:
+                history_data = []
+                for msg in conv_manager.history:
+                    history_data.append({
+                        "role": msg.role,
+                        "content": msg.content,
+                        "timestamp": msg.timestamp,
+                        "metadata": msg.metadata
+                    })
+
                 session_ready = {
                     "type": "session_ready",
                     "session_id": payload.session_id,
                     "client_loaded": client_loaded,
+                    "history": history_data,
                 }
                 yield json.dumps(session_ready, ensure_ascii=False) + "\n"
 
@@ -478,6 +499,41 @@ async def delete_client(client_id: str):
         return {"status": "deleted", "client_id": client_id}
     else:
         raise HTTPException(status_code=404, detail=result.error_message)
+
+
+@app.get("/api/clients/{client_id}/history")
+async def get_client_history(client_id: str):
+    """
+    Return the saved chat history for a client.
+
+    This allows the frontend to immediately display prior conversation
+    when a client profile is loaded, before any new message is sent.
+    """
+    from app.config import CHAT_HISTORY_DIR
+    import json as _json
+    from pathlib import Path as _Path
+
+    history_path = _Path(CHAT_HISTORY_DIR) / f"{client_id}_history.json"
+    if not history_path.exists():
+        return {"history": [], "client_id": client_id}
+
+    try:
+        data = _json.loads(history_path.read_text(encoding="utf-8"))
+        # Only expose role/content/timestamp/metadata — no internals
+        history = [
+            {
+                "role": item.get("role", "user"),
+                "content": item.get("content", ""),
+                "timestamp": item.get("timestamp"),
+                "metadata": item.get("metadata", {}),
+            }
+            for item in data
+            if item.get("role") in ("user", "assistant")
+        ]
+        return {"history": history, "client_id": client_id}
+    except Exception as e:
+        logger.error("Failed to read history for client {}: {}", client_id, e)
+        raise HTTPException(status_code=500, detail="Failed to read chat history")
 
 
 app.mount("/", StaticFiles(directory=FRONTEND_DIST_DIR, html=True), name="frontend")

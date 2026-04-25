@@ -72,7 +72,10 @@ CHUNK_OVERLAP: int = int(os.getenv("CHUNK_OVERLAP", "64"))
 # ─── LLM Generation Parameters ───────────────────────────────────────────────
 LLM_TEMPERATURE: float = float(os.getenv("LLM_TEMPERATURE", "0.1"))
 LLM_MAX_TOKENS: int = int(os.getenv("LLM_MAX_TOKENS", "1024"))
-LLM_NUM_CTX: int = int(os.getenv("LLM_NUM_CTX", "8192"))
+# Smaller context window = significantly faster prompt prefill in Ollama.
+# 2048 is enough for system prompt + history + RAG chunks + user message.
+LLM_NUM_CTX: int = int(os.getenv("LLM_NUM_CTX", "4096"))
+# More threads = faster CPU inference; 8 covers most modern laptops.
 LLM_NUM_THREADS: int = int(os.getenv("LLM_NUM_THREADS", "8"))
 
 # ─── Conversation Configuration ──────────────────────────────────────────────
@@ -80,6 +83,9 @@ MAX_HISTORY_TURNS: int = int(os.getenv("MAX_HISTORY_TURNS", "4"))
 
 # ─── Cache Configuration ─────────────────────────────────────────────────────
 EMBEDDING_CACHE_SIZE: int = int(os.getenv("EMBEDDING_CACHE_SIZE", "200"))
+
+# ─── Chat History Configuration ──────────────────────────────────────────────
+CHAT_HISTORY_DIR: str = os.getenv("CHAT_HISTORY_DIR", str(PROJECT_ROOT / "data" / "chat_histories"))
 
 # ─── Logging Configuration ───────────────────────────────────────────────────
 LOG_LEVEL: str = os.getenv("LOG_LEVEL", "INFO")
@@ -118,6 +124,7 @@ def ensure_directories() -> None:
         Path(SQLITE_DB_PATH).parent,
         Path(LOG_DIR),
         PROJECT_ROOT / "data" / "processed",
+        Path(CHAT_HISTORY_DIR),
     ]
     for d in dirs:
         d.mkdir(parents=True, exist_ok=True)

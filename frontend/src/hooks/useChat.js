@@ -38,6 +38,37 @@ export function useChat() {
     setCurrentClientId(id)
     clientIdRef.current = id
   }, [])
+
+  /**
+   * Eagerly load a client's saved chat history from the backend
+   * and populate the message list without requiring the user to
+   * send a prompt first.
+   */
+  const loadClientHistory = useCallback(async (clientId) => {
+    if (!clientId) return
+    try {
+      const res = await fetch(`/api/clients/${encodeURIComponent(clientId)}/history`)
+      if (!res.ok) return
+      const data = await res.json()
+      if (!Array.isArray(data.history) || !data.history.length) return
+      const formatted = data.history.map((msg) =>
+        createMessage(msg.role, msg.content, {
+          timestamp: new Date(msg.timestamp || Date.now()),
+          citations: msg.metadata?.citations || [],
+          toolsUsed: msg.metadata?.tools_used || [],
+        })
+      )
+      // Replace the slate for this client with the loaded history.
+      // Use the functional updater so we always operate on latest state.
+      setMessagesDict((dict) => ({
+        ...dict,
+        [clientId]: formatted,
+      }))
+    } catch {
+      // Non-critical — silently ignore network/parse errors
+    }
+  }, [])
+
   const [isGenerating, setIsGenerating] = useState(false)
   const [queryCount, setQueryCount] = useState(0)
   const [ragHits, setRagHits] = useState(0)
@@ -193,11 +224,36 @@ export function useChat() {
     pendingCitationsRef.current = []
   }, [resetSpeech])
 
-  const handleSessionReady = useCallback(() => {
+  const handleSessionReady = useCallback((payload) => {
     if (!turnOpenRef.current && !streamingMessageIdRef.current) {
       setIsGenerating(false)
     }
-  }, [])
+    if (payload && Array.isArray(payload.history) && payload.history.length) {
+      const formattedHistory = payload.history.map((msg) =>
+        createMessage(msg.role, msg.content, {
+          timestamp: new Date(msg.timestamp || Date.now()),
+          citations: msg.metadata?.citations || [],
+          toolsUsed: msg.metadata?.tools_used || [],
+        })
+      )
+      setMessages((prev) => {
+        // The server history contains saved messages. Any user message in
+        // the local state whose exact content is NOT already represented in
+        // the history is a "pending" bubble — typically the message the user
+        // just sent before session_ready arrived. Append those after the
+        // history so they stay visible while the assistant streams its reply.
+        const historyContents = new Set(
+          formattedHistory.filter((m) => m.role === 'user').map((m) => m.content)
+        )
+        const pendingMessages = prev.filter(
+          (m) => m.role === 'user' && !m.isStreaming && !historyContents.has(m.content)
+        )
+        return pendingMessages.length
+          ? [...formattedHistory, ...pendingMessages]
+          : formattedHistory
+      })
+    }
+  }, [setMessages])
 
   const handleToken = useCallback((payload) => {
     if (!turnOpenRef.current) {
@@ -378,5 +434,6 @@ export function useChat() {
     setIsVoiceEnabled,
     resetSpeech,
     switchClient,
+    loadClientHistory,
   }
 }

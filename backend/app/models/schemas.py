@@ -38,6 +38,7 @@ class WSSessionReady(BaseModel):
     type: str = "session_ready"
     session_id: str
     client_loaded: bool = False
+    history: List[Dict[str, Any]] = Field(default_factory=list)
 
 
 class WSToken(BaseModel):

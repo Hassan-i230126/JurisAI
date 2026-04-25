@@ -29,7 +29,7 @@ class LLMEngine:
     """
 
     def __init__(self):
-        """Initialize the LLM engine."""
+        """Initialize the LLM engine with a persistent HTTP client."""
         self._model = LLM_MODEL
         self._options = {
             "temperature": LLM_TEMPERATURE,
@@ -37,10 +37,18 @@ class LLMEngine:
             "num_predict": LLM_MAX_TOKENS,
             "num_ctx": LLM_NUM_CTX,
             "num_thread": LLM_NUM_THREADS,
+            "num_batch": 512,       # Process 512 prompt tokens per batch — faster prefill
             "repeat_penalty": 1.1,
         }
         self._is_available = False
+        # Reuse a single async client for the lifetime of the engine.
+        # This avoids TCP handshake overhead on every generate call.
         self._http_timeout = httpx.Timeout(connect=2.0, read=None, write=30.0, pool=10.0)
+        self._client = httpx.AsyncClient(
+            base_url=OLLAMA_BASE_URL,
+            timeout=self._http_timeout,
+            limits=httpx.Limits(max_connections=10, max_keepalive_connections=5),
+        )
 
     async def check_availability(self) -> bool:
         """
@@ -50,18 +58,15 @@ class LLMEngine:
             True if Ollama is reachable and the model is pulled.
         """
         try:
-            async with httpx.AsyncClient(base_url=OLLAMA_BASE_URL, timeout=httpx.Timeout(connect=2.0, read=8.0, write=8.0, pool=8.0)) as client:
-                response = await client.get("/api/tags")
-                response.raise_for_status()
-                models_response = response.json()
+            response = await self._client.get("/api/tags")
+            response.raise_for_status()
+            models_response = response.json()
 
-            # Check if our model is in the list.
             available_models = [
                 m.get("name", m.get("model", ""))
                 for m in models_response.get("models", [])
             ]
 
-            # Check for model name (may include tag like ":latest")
             model_found = any(
                 self._model in m or m.startswith(self._model)
                 for m in available_models
@@ -94,16 +99,8 @@ class LLMEngine:
         messages: List[Dict[str, str]],
     ) -> AsyncGenerator[str, None]:
         """
-        Stream tokens from the LLM one by one.
-        
-        Uses ollama.chat() with stream=True, wrapped in an async
-        generator. Each yielded value is a single token string.
-        
-        Args:
-            messages: List of message dicts with 'role' and 'content'.
-            
-        Yields:
-            Individual token strings as they are generated.
+        Stream tokens from the LLM using the persistent httpx client.
+        Each yielded value is a single token string.
         """
         start_time = time.time()
         total_tokens = 0
@@ -114,28 +111,28 @@ class LLMEngine:
                 "messages": messages,
                 "stream": True,
                 "options": self._options,
+                "keep_alive": -1,  # Keep model loaded in memory indefinitely
             }
 
-            async with httpx.AsyncClient(base_url=OLLAMA_BASE_URL, timeout=self._http_timeout) as client:
-                async with client.stream("POST", "/api/chat", json=payload) as response:
-                    response.raise_for_status()
+            async with self._client.stream("POST", "/api/chat", json=payload) as response:
+                response.raise_for_status()
 
-                    async for line in response.aiter_lines():
-                        if not line:
-                            continue
+                async for line in response.aiter_lines():
+                    if not line:
+                        continue
 
-                        try:
-                            chunk = json.loads(line)
-                        except json.JSONDecodeError:
-                            continue
+                    try:
+                        chunk = json.loads(line)
+                    except json.JSONDecodeError:
+                        continue
 
-                        token = chunk.get("message", {}).get("content", "")
-                        if token:
-                            total_tokens += 1
-                            yield token
+                    token = chunk.get("message", {}).get("content", "")
+                    if token:
+                        total_tokens += 1
+                        yield token
 
-                        if chunk.get("done"):
-                            break
+                    if chunk.get("done"):
+                        break
 
         except Exception as e:
             self._is_available = False
