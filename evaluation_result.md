@@ -8,7 +8,7 @@
 | Property | Value |
 |----------|-------|
 | OS | Windows 11 |
-| CPU | Intel64 Family 6 Model 186 Stepping 3, GenuineIntel |
+| CPU | Intel Core i5 - 13th Generation |
 | CPU Cores | 12 |
 | Python | 3.13.3 |
 | LLM Model | phi4-mini (Ollama, CPU) |
@@ -49,7 +49,7 @@
 - **Avg Faithfulness**: 83.33%
 - **Avg Retrieval Latency**: 201 ms
 
-![RAG Metrics](evaluation_charts\rag_metrics.png)
+![RAG Metrics](evaluation_charts/rag_metrics.png)
 
 ### Analysis
 - Recall is moderate, meaning the retriever finds some but not all expected statutes/sections. This could be improved with hybrid search (keyword + semantic).
@@ -61,7 +61,7 @@
 - **Argument Accuracy**: 100%
 - **False Positive Rate**: 0% (0/5)
 
-![Tool Accuracy](evaluation_charts\tool_accuracy.png)
+![Tool Accuracy](evaluation_charts/tool_accuracy.png)
 
 ### Detailed Results
 
@@ -88,7 +88,7 @@
 | tool_only | 10 | 34378.38 ms | 31688.27 ms | 44695.01 ms | 81734.34 ms | 67800.86 ms | 145156.91 ms | 162.65 ms |
 | mixed | 10 | 30500.78 ms | 26617.77 ms | 42551.66 ms | 102258.19 ms | 95213.95 ms | 163849.23 ms | 174.29 ms |
 
-![Latency Distribution](evaluation_charts\latency_boxplot.png)
+![Latency Distribution](evaluation_charts/latency_boxplot.png)
 
 ### Analysis
 - RAG queries add ~14225 ms overhead to TTFT compared to simple dialogue (embedding + ChromaDB search).
