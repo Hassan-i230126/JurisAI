@@ -8,7 +8,7 @@
 | Property | Value |
 |----------|-------|
 | OS | Windows 11 |
-| CPU | Intel Core i5 13th Generation |
+| CPU | Intel Core i5 - 13th Generation |
 | CPU Cores | 12 |
 | Python | 3.13.3 |
 | LLM Model | phi4-mini (Ollama, CPU) |
