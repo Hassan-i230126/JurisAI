@@ -5,6 +5,7 @@ Main entry point: routes, lifespan, static file serving.
 
 import asyncio
 import json
+import os
 import time
 from contextlib import asynccontextmanager
 from pathlib import Path
@@ -12,6 +13,7 @@ from typing import Optional
 
 import chromadb
 from fastapi import FastAPI, WebSocket, HTTPException, Request
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from loguru import logger
@@ -200,6 +202,21 @@ app = FastAPI(
     description="Pakistani Criminal Law Intelligence System",
     version="1.0.0",
     lifespan=lifespan,
+)
+
+# ─── CORS ─────────────────────────────────────────────────────────────────────
+# Reads comma-separated allowed origins from CORS_ORIGINS env var.
+# Locally this is not needed (same-origin via Vite proxy).
+# On Vercel: set CORS_ORIGINS=https://your-app.vercel.app in your .env
+_raw_origins = os.getenv("CORS_ORIGINS", "")
+_allowed_origins = [o.strip() for o in _raw_origins.split(",") if o.strip()]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=_allowed_origins or ["*"],   # '*' is safe locally; tighten on prod
+    allow_credentials=True,
+    allow_methods=["GET", "POST", "DELETE", "OPTIONS"],
+    allow_headers=["*"],
 )
 
 

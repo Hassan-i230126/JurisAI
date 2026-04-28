@@ -34,6 +34,13 @@ def _chart(name):
     return str(CHARTS_DIR / name)
 
 
+def _pct(val):
+    """Format a 0-1 float as a percentage string, or N/A if None."""
+    if val is None:
+        return "N/A"
+    return f"{val:.2%}"
+
+
 # ── Chart generators ─────────────────────────────────────────────────────────
 
 def gen_latency_box(latency):
@@ -132,6 +139,36 @@ def gen_rag_bar(rag):
     ax.grid(axis="y", alpha=0.3)
     plt.tight_layout()
     path = _chart("rag_metrics.png")
+    fig.savefig(path, dpi=150)
+    plt.close(fig)
+    return path
+
+def gen_deepeval_bar(metrics_dict: dict, title: str, filename: str):
+    """
+    Render a horizontal bar chart for a set of DeepEval metric scores.
+    metrics_dict: {metric_label: score_float (0-1)}
+    """
+    if not metrics_dict:
+        return None
+    labels = list(metrics_dict.keys())
+    scores = [metrics_dict[k] for k in labels]
+    colors = ["#4CAF50" if s >= 0.7 else "#FF9800" if s >= 0.5 else "#F44336" for s in scores]
+
+    fig, ax = plt.subplots(figsize=(8, max(3, len(labels) * 0.8)))
+    bars = ax.barh(labels, scores, color=colors, edgecolor="none")
+    ax.set_xlim(0, 1.05)
+    ax.axvline(0.7, color="gray", linestyle="--", linewidth=1, alpha=0.6, label="0.7 threshold")
+    ax.set_xlabel("Score (0–1)")
+    ax.set_title(title, fontweight="bold")
+    for bar, score in zip(bars, scores):
+        ax.text(
+            score + 0.01, bar.get_y() + bar.get_height() / 2,
+            f"{score:.2f}", va="center", fontsize=10,
+        )
+    ax.legend(loc="lower right", fontsize=8)
+    ax.grid(axis="x", alpha=0.3)
+    plt.tight_layout()
+    path = _chart(filename)
     fig.savefig(path, dpi=150)
     plt.close(fig)
     return path
@@ -264,6 +301,101 @@ def build_report():
         lines.append("")
     else:
         lines.append("*No RAG results available.*\n")
+
+    lines.append("---")
+    lines.append("## 3b. DeepEval Semantic Evaluation (LLM-as-Judge)")
+    lines.append("")
+    lines.append("> **Judge Model**: Gemini 2.0 Flash (Google AI Studio free tier)  ")
+    lines.append("> Metrics below are computed by an LLM judge reading the actual legal answer")
+    lines.append("> and the retrieved context chunks, scoring semantic accuracy — not just string presence.")
+    lines.append("")
+
+    # Load all DeepEval result files
+    de_rag_faith   = _load("rag_deepeval_faithfulness.json")
+    de_rag_rel     = _load("rag_deepeval_relevancy.json")
+    de_rag_prec    = _load("rag_deepeval_precision.json")
+    de_rag_recall  = _load("rag_deepeval_recall.json")
+    de_conv_rel    = _load("conversational_deepeval_relevancy.json")
+    de_conv_faith  = _load("conversational_deepeval_faithfulness.json")
+    de_conv_halluc = _load("conversational_deepeval_hallucination.json")
+    de_conv_coh    = _load("conversational_deepeval_coherence.json")
+
+    any_de = any([
+        de_rag_faith, de_rag_rel, de_rag_prec, de_rag_recall,
+        de_conv_rel, de_conv_faith, de_conv_halluc, de_conv_coh
+    ])
+
+    if any_de:
+        # ── RAG DeepEval table
+        lines.append("### RAG Pipeline — Semantic Metrics")
+        lines.append("")
+        lines.append("| Metric | Samples | Avg Score | Pass Rate | Threshold |")
+        lines.append("|--------|:-------:|----------:|----------:|:---------:|")
+
+        def _de_row(data, metric_name, threshold):
+            if not data:
+                return f"| {metric_name} | — | *not run* | — | {threshold:.0%} |"
+            n   = data.get("samples_evaluated", 0)
+            avg = data.get("avg_score", data.get("avg_hallucination_score", 0))
+            pr  = data.get("pass_rate", 0)
+            icon = "✅" if avg >= threshold else "❌"
+            return f"| {metric_name} | {n} | {avg:.2%} {icon} | {pr:.0%} | {threshold:.0%} |"
+
+        lines.append(_de_row(de_rag_faith,  "Faithfulness (RAG)",         0.70))
+        lines.append(_de_row(de_rag_rel,    "Answer Relevancy (RAG)",      0.70))
+        lines.append(_de_row(de_rag_prec,   "Contextual Precision (RAG)",  0.60))
+        lines.append(_de_row(de_rag_recall, "Contextual Recall (RAG)",     0.60))
+        lines.append("")
+
+        # ── Conversational DeepEval table
+        lines.append("### Conversational Quality — Semantic Metrics")
+        lines.append("")
+        lines.append("| Metric | Samples | Avg Score | Pass Rate | Threshold |")
+        lines.append("|--------|:-------:|----------:|----------:|:---------:|")
+        lines.append(_de_row(de_conv_rel,    "Answer Relevancy (Conv)",    0.70))
+        lines.append(_de_row(de_conv_faith,  "Faithfulness (Conv)",        0.70))
+        # Hallucination is inverted: lower is better
+        if de_conv_halluc:
+            avg_h = de_conv_halluc.get("avg_hallucination_score", 1.0)
+            pr_h  = de_conv_halluc.get("pass_rate", 0)
+            icon  = "✅" if avg_h <= 0.25 else "❌"
+            lines.append(f"| Hallucination Score (Conv) | {de_conv_halluc.get('samples_evaluated',0)} | {avg_h:.2%} {icon} | {pr_h:.0%} | ≤ 25% |") 
+        else:
+            lines.append("| Hallucination Score (Conv) | — | *not run* | — | ≤ 25% |")
+        lines.append(_de_row(de_conv_coh,    "Multi-turn Coherence (GEval)", 0.65))
+        lines.append("")
+
+        # ── Chart
+        chart_metrics = {}
+        if de_rag_faith:   chart_metrics["Faithfulness (RAG)"]        = de_rag_faith.get("avg_score", 0)
+        if de_rag_rel:     chart_metrics["Answer Relevancy (RAG)"]    = de_rag_rel.get("avg_score", 0)
+        if de_rag_prec:    chart_metrics["Contextual Precision (RAG)"] = de_rag_prec.get("avg_score", 0)
+        if de_rag_recall:  chart_metrics["Contextual Recall (RAG)"]   = de_rag_recall.get("avg_score", 0)
+        if de_conv_rel:    chart_metrics["Answer Relevancy (Conv)"]   = de_conv_rel.get("avg_score", 0)
+        if de_conv_faith:  chart_metrics["Faithfulness (Conv)"]       = de_conv_faith.get("avg_score", 0)
+        if de_conv_coh:    chart_metrics["Multi-turn Coherence"]       = de_conv_coh.get("avg_score", 0)
+        if de_conv_halluc: chart_metrics["Hallucination-free Score"]  = 1 - de_conv_halluc.get("avg_hallucination_score", 1.0)
+
+        if chart_metrics:
+            de_chart = gen_deepeval_bar(
+                chart_metrics,
+                "DeepEval Semantic Evaluation — All Metrics",
+                "deepeval_metrics.png",
+            )
+            if de_chart:
+                lines.append(f"![DeepEval Metrics]({de_chart})")
+                lines.append("")
+
+        lines.append("### Analysis")
+        lines.append("- DeepEval metrics are evaluated by Gemini 2.0 Flash reading the actual model output and legal context.")
+        lines.append("- A score ≥ 0.70 on Faithfulness means the LLM's legal advice is grounded in retrieved statutes.")
+        lines.append("- A Hallucination score ≤ 0.25 means the AI rarely fabricates legal facts.")
+        if de_conv_halluc and de_conv_halluc.get("avg_hallucination_score", 1) > 0.25:
+            lines.append("- ⚠️ **Hallucination rate is above threshold.** Consider adding a post-generation grounding check.")
+        lines.append("")
+    else:
+        lines.append("*DeepEval results not available. Run the evaluation suite with a valid `GEMINI_API_KEY` to generate these metrics.*")
+        lines.append("")
 
     # ── Tool accuracy
     lines.append("---")

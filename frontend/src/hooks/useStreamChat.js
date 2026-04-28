@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { apiUrl } from '../utils/config'
 
 const HEALTH_POLL_MS = 5000
 
@@ -30,7 +31,7 @@ export function useStreamChat({ handlers = {} }) {
     const timeoutId = window.setTimeout(() => controller.abort(), 2000)
 
     try {
-      const response = await fetch('/api/health', {
+      const response = await fetch(apiUrl('/api/health'), {
         method: 'GET',
         signal: controller.signal,
       })
@@ -133,7 +134,7 @@ export function useStreamChat({ handlers = {} }) {
       activeRequestRef.current = controller
 
       try {
-        const response = await fetch('/api/chat/stream', {
+        const response = await fetch(apiUrl('/api/chat/stream'), {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

@@ -3,17 +3,17 @@
     "concurrent_users": 1,
     "total_turns": 3,
     "errors": 0,
-    "wall_time_ms": 388597.93,
-    "turns_per_second": 0.0077,
+    "wall_time_ms": 338954.55,
+    "turns_per_second": 0.0089,
     "ttft": {
-      "mean": 30284.88,
-      "median": 25502.84,
-      "p90": 39798.95
+      "mean": 33833.25,
+      "median": 22169.26,
+      "p90": 51681.4
     },
     "e2e": {
-      "mean": 129529.12,
-      "median": 121739.9,
-      "p90": 193282.6
+      "mean": 112982.98,
+      "median": 95169.77,
+      "p90": 153423.43
     },
     "user_details": [
       {
@@ -21,21 +21,21 @@
         "turns": [
           {
             "turn": 0,
-            "ttft_ms": 25502.84,
-            "e2e_ms": 55679.18,
-            "token_count": 151
+            "ttft_ms": 59059.44,
+            "e2e_ms": 95169.77,
+            "token_count": 246
           },
           {
             "turn": 1,
-            "ttft_ms": 21978.82,
-            "e2e_ms": 211168.28,
-            "token_count": 1024
+            "ttft_ms": 20271.04,
+            "e2e_ms": 75792.33,
+            "token_count": 405
           },
           {
             "turn": 2,
-            "ttft_ms": 43372.98,
-            "e2e_ms": 121739.9,
-            "token_count": 422
+            "ttft_ms": 22169.26,
+            "e2e_ms": 167986.84,
+            "token_count": 1024
           }
         ]
       }
@@ -45,17 +45,17 @@
     "concurrent_users": 2,
     "total_turns": 6,
     "errors": 0,
-    "wall_time_ms": 588172.39,
-    "turns_per_second": 0.0102,
+    "wall_time_ms": 411456.84,
+    "turns_per_second": 0.0146,
     "ttft": {
-      "mean": 114467.13,
-      "median": 98440.64,
-      "p90": 186456.4
+      "mean": 58627.22,
+      "median": 55273.93,
+      "p90": 85210.49
     },
     "e2e": {
-      "mean": 189682.26,
-      "median": 158199.47,
-      "p90": 300109.95
+      "mean": 112290.91,
+      "median": 90399.93,
+      "p90": 186347.01
     },
     "user_details": [
       {
@@ -63,21 +63,21 @@
         "turns": [
           {
             "turn": 0,
-            "ttft_ms": 53934.19,
-            "e2e_ms": 128493.5,
-            "token_count": 330
+            "ttft_ms": 41883.46,
+            "e2e_ms": 68524.15,
+            "token_count": 192
           },
           {
             "turn": 1,
-            "ttft_ms": 63074.54,
-            "e2e_ms": 162156.95,
-            "token_count": 466
+            "ttft_ms": 34205.9,
+            "e2e_ms": 51727.43,
+            "token_count": 132
           },
           {
             "turn": 2,
-            "ttft_ms": 229688.25,
-            "e2e_ms": 259291.86,
-            "token_count": 170
+            "ttft_ms": 81725.37,
+            "e2e_ms": 142044.84,
+            "token_count": 434
           }
         ]
       },
@@ -86,21 +86,21 @@
         "turns": [
           {
             "turn": 0,
-            "ttft_ms": 132225.29,
-            "e2e_ms": 154241.98,
-            "token_count": 106
+            "ttft_ms": 68664.4,
+            "e2e_ms": 85837.47,
+            "token_count": 122
           },
           {
             "turn": 1,
-            "ttft_ms": 143224.54,
-            "e2e_ms": 340928.03,
-            "token_count": 1024
+            "ttft_ms": 36588.6,
+            "e2e_ms": 94962.39,
+            "token_count": 419
           },
           {
             "turn": 2,
-            "ttft_ms": 64655.99,
-            "e2e_ms": 92981.25,
-            "token_count": 161
+            "ttft_ms": 88695.6,
+            "e2e_ms": 230649.18,
+            "token_count": 1024
           }
         ]
       }
@@ -110,17 +110,17 @@
     "concurrent_users": 3,
     "total_turns": 9,
     "errors": 0,
-    "wall_time_ms": 742460.5,
-    "turns_per_second": 0.0121,
+    "wall_time_ms": 485756.15,
+    "turns_per_second": 0.0185,
     "ttft": {
-      "mean": 150104.12,
-      "median": 141156.64,
-      "p90": 243987.13
+      "mean": 83342.68,
+      "median": 92349.6,
+      "p90": 112275.23
     },
     "e2e": {
-      "mean": 215478.16,
-      "median": 208119.09,
-      "p90": 319852.22
+      "mean": 126577.11,
+      "median": 124832.83,
+      "p90": 166264.29
     },
     "user_details": [
       {
@@ -128,21 +128,21 @@
         "turns": [
           {
             "turn": 0,
-            "ttft_ms": 82268.82,
-            "e2e_ms": 112136.32,
-            "token_count": 158
+            "ttft_ms": 63910.93,
+            "e2e_ms": 81985.4,
+            "token_count": 132
           },
           {
             "turn": 1,
-            "ttft_ms": 141156.64,
-            "e2e_ms": 208119.09,
-            "token_count": 298
+            "ttft_ms": 92349.6,
+            "e2e_ms": 129698.78,
+            "token_count": 274
           },
           {
             "turn": 2,
-            "ttft_ms": 255733.53,
-            "e2e_ms": 316178.78,
-            "token_count": 324
+            "ttft_ms": 112182.04,
+            "e2e_ms": 124832.83,
+            "token_count": 95
           }
         ]
       },
@@ -151,21 +151,21 @@
         "turns": [
           {
             "turn": 0,
-            "ttft_ms": 112599.62,
-            "e2e_ms": 141102.54,
-            "token_count": 140
+            "ttft_ms": 82146.24,
+            "e2e_ms": 100913.0,
+            "token_count": 124
           },
           {
             "turn": 1,
-            "ttft_ms": 187921.48,
-            "e2e_ms": 267872.95,
-            "token_count": 430
+            "ttft_ms": 112647.97,
+            "e2e_ms": 148830.1,
+            "token_count": 268
           },
           {
             "turn": 2,
-            "ttft_ms": 241050.53,
-            "e2e_ms": 333466.16,
-            "token_count": 448
+            "ttft_ms": 93727.38,
+            "e2e_ms": 236001.06,
+            "token_count": 1024
           }
         ]
       },
@@ -174,21 +174,21 @@
         "turns": [
           {
             "turn": 0,
-            "ttft_ms": 45374.18,
-            "e2e_ms": 81480.86,
-            "token_count": 176
+            "ttft_ms": 34459.58,
+            "e2e_ms": 63755.9,
+            "token_count": 212
           },
           {
             "turn": 1,
-            "ttft_ms": 88874.97,
-            "e2e_ms": 162497.98,
-            "token_count": 344
+            "ttft_ms": 59208.05,
+            "e2e_ms": 108468.03,
+            "token_count": 345
           },
           {
             "turn": 2,
-            "ttft_ms": 195957.29,
-            "e2e_ms": 316448.73,
-            "token_count": 589
+            "ttft_ms": 99452.29,
+            "e2e_ms": 144708.92,
+            "token_count": 331
           }
         ]
       }
@@ -197,18 +197,18 @@
   "5_users": {
     "concurrent_users": 5,
     "total_turns": 15,
-    "errors": 5,
-    "wall_time_ms": 823247.55,
-    "turns_per_second": 0.0182,
+    "errors": 3,
+    "wall_time_ms": 759068.9,
+    "turns_per_second": 0.0198,
     "ttft": {
-      "mean": 166232.93,
-      "median": 148894.24,
-      "p90": 273074.7
+      "mean": 141001.82,
+      "median": 137396.77,
+      "p90": 210582.67
     },
     "e2e": {
-      "mean": 235293.28,
-      "median": 212483.94,
-      "p90": 408986.32
+      "mean": 196044.87,
+      "median": 162573.65,
+      "p90": 284053.28
     },
     "user_details": [
       {
@@ -216,19 +216,21 @@
         "turns": [
           {
             "turn": 0,
-            "ttft_ms": 135264.28,
-            "e2e_ms": 162361.3,
-            "token_count": 159
+            "ttft_ms": 112591.23,
+            "e2e_ms": 133015.7,
+            "token_count": 146
           },
           {
             "turn": 1,
-            "error": "",
-            "e2e_ms": 300418.39504241943
+            "ttft_ms": 141632.2,
+            "e2e_ms": 286996.03,
+            "token_count": 1024
           },
           {
             "turn": 2,
-            "error": "",
-            "e2e_ms": 300684.867143631
+            "ttft_ms": 170728.07,
+            "e2e_ms": 257568.5,
+            "token_count": 622
           }
         ]
       },
@@ -237,21 +239,20 @@
         "turns": [
           {
             "turn": 0,
-            "ttft_ms": 104102.69,
-            "e2e_ms": 135063.09,
-            "token_count": 181
+            "ttft_ms": 34960.23,
+            "e2e_ms": 95840.54,
+            "token_count": 433
           },
           {
             "turn": 1,
-            "ttft_ms": 272538.15,
-            "e2e_ms": 442412.42,
-            "token_count": 1024
+            "ttft_ms": 87498.67,
+            "e2e_ms": 133150.16,
+            "token_count": 348
           },
           {
             "turn": 2,
-            "ttft_ms": 217748.21,
-            "e2e_ms": 245738.34,
-            "token_count": 161
+            "error": "",
+            "e2e_ms": 300293.63894462585
           }
         ]
       },
@@ -260,20 +261,21 @@
         "turns": [
           {
             "turn": 0,
-            "ttft_ms": 83972.48,
-            "e2e_ms": 103887.07,
-            "token_count": 117
+            "ttft_ms": 133161.34,
+            "e2e_ms": 155002.87,
+            "token_count": 157
           },
           {
             "turn": 1,
-            "ttft_ms": 277903.6,
-            "e2e_ms": 300310.05,
-            "token_count": 145
+            "ttft_ms": 267717.63,
+            "e2e_ms": 409995.29,
+            "token_count": 1024
           },
           {
             "turn": 2,
-            "error": "",
-            "e2e_ms": 300470.6130027771
+            "ttft_ms": 158937.01,
+            "e2e_ms": 194067.46,
+            "token_count": 241
           }
         ]
       },
@@ -282,19 +284,20 @@
         "turns": [
           {
             "turn": 0,
-            "ttft_ms": 162524.21,
-            "e2e_ms": 179229.54,
-            "token_count": 98
+            "ttft_ms": 96000.65,
+            "e2e_ms": 112432.29,
+            "token_count": 117
           },
           {
             "turn": 1,
-            "error": "",
-            "e2e_ms": 300327.2080421448
+            "ttft_ms": 118636.98,
+            "e2e_ms": 159850.3,
+            "token_count": 314
           },
           {
             "turn": 2,
             "error": "",
-            "e2e_ms": 300379.9126148224
+            "e2e_ms": 300286.8981361389
           }
         ]
       },
@@ -303,21 +306,20 @@
         "turns": [
           {
             "turn": 0,
-            "ttft_ms": 59977.66,
-            "e2e_ms": 83451.71,
-            "token_count": 121
+            "ttft_ms": 155146.86,
+            "e2e_ms": 165297.01,
+            "token_count": 72
           },
           {
             "turn": 1,
-            "ttft_ms": 121655.47,
-            "e2e_ms": 295206.95,
-            "token_count": 1024
+            "error": "",
+            "e2e_ms": 300301.664352417
           },
           {
             "turn": 2,
-            "ttft_ms": 226642.51,
-            "e2e_ms": 405272.31,
-            "token_count": 1024
+            "ttft_ms": 215010.96,
+            "e2e_ms": 249322.26,
+            "token_count": 235
           }
         ]
       }

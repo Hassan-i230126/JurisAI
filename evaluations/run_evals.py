@@ -4,6 +4,9 @@ Single entry point: runs all pytest tests, then generates the report.
 
 Usage:
     python evaluations/run_evals.py
+
+Requires GEMINI_API_KEY in your .env file for the DeepEval (LLM-as-judge) phases.
+Get a free key at: https://aistudio.google.com/app/apikey
 """
 
 import subprocess
@@ -27,24 +30,41 @@ def main():
     cwd = str(EVAL_DIR)
 
     # ── Phase 1: Component tests ─────────────────────────────────────────
-    print("\n[1/6] Running CRM tests...")
+    print("\n[1/8] Running CRM tests...")
     subprocess.run([PYTHON, "-m", "pytest", "test_crm.py", "-v", "--tb=short"], cwd=cwd)
 
-    print("\n[2/6] Running tool functional tests...")
+    print("\n[2/8] Running tool functional tests...")
     subprocess.run([PYTHON, "-m", "pytest", "test_tools.py", "-v", "--tb=short"], cwd=cwd)
 
-    print("\n[3/6] Running tool invocation accuracy tests...")
+    print("\n[3/8] Running tool invocation accuracy tests...")
     subprocess.run([PYTHON, "-m", "pytest", "test_tool_invocation.py", "-v", "--tb=short"], cwd=cwd)
 
-    # ── Phase 2: RAG evaluation ──────────────────────────────────────────
-    print("\n[4/6] Running RAG evaluation...")
+    # ── Phase 2: RAG evaluation (custom string-matching — unchanged) ──────
+    print("\n[4/8] Running RAG evaluation (string-matching)...")
     subprocess.run([PYTHON, "-m", "pytest", "test_rag.py", "-v", "--tb=short"], cwd=cwd)
 
-    # ── Phase 3: Conversational + Performance ────────────────────────────
-    print("\n[5/6] Running conversational correctness tests...")
+    # ── Phase 3: DeepEval RAG — LLM-as-judge semantic evaluation ─────────
+    print("\n[5/8] Running DeepEval RAG evaluation (LLM-as-judge via Gemini)...")
+    print("      Requires GEMINI_API_KEY in environment. Skipped if key is missing.")
+    subprocess.run(
+        [PYTHON, "-m", "pytest", "test_rag_deepeval.py", "-v", "--tb=short", "-s"],
+        cwd=cwd,
+    )
+
+    # ── Phase 4: Conversational correctness (custom string-matching — unchanged)
+    print("\n[6/8] Running conversational correctness tests (string-matching)...")
     subprocess.run([PYTHON, "-m", "pytest", "test_conversational.py", "-v", "--tb=short"], cwd=cwd)
 
-    print("\n[6/6] Running latency & throughput benchmarks...")
+    # ── Phase 5: DeepEval Conversational — LLM-as-judge semantic evaluation
+    print("\n[7/8] Running DeepEval conversational evaluation (LLM-as-judge via Gemini)...")
+    print("      Requires GEMINI_API_KEY in environment. Skipped if key is missing.")
+    subprocess.run(
+        [PYTHON, "-m", "pytest", "test_conversational_deepeval.py", "-v", "--tb=short", "-s"],
+        cwd=cwd,
+    )
+
+    # ── Phase 6: Performance benchmarks (unchanged) ───────────────────────
+    print("\n[8/8] Running latency & throughput benchmarks...")
     subprocess.run([PYTHON, "-m", "pytest", "test_latency.py", "test_throughput.py", "-v", "--tb=short"], cwd=cwd)
 
     # ── Phase 4: Generate report ─────────────────────────────────────────

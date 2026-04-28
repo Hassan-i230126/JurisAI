@@ -1,6 +1,6 @@
 # Juris AI — Evaluation Report
 
-> Generated on 2026-04-25 15:12:19
+> Generated on 2026-04-28 22:39:46
 > Python 3.13.3 | Windows 11 | Intel64 Family 6 Model 186 Stepping 3, GenuineIntel
 
 ## 1. Hardware & Environment
@@ -8,7 +8,7 @@
 | Property | Value |
 |----------|-------|
 | OS | Windows 11 |
-| CPU | Intel64 Family 6 Model 186 Stepping 3, GenuineIntel |
+| CPU | Intel Core i5 13th Generation |
 | CPU Cores | 12 |
 | Python | 3.13.3 |
 | LLM Model | phi4-mini (Ollama, CPU) |
@@ -49,7 +49,7 @@
 - **Avg Faithfulness**: 83.33%
 - **Avg Retrieval Latency**: 201 ms
 
-![RAG Metrics](evaluation_charts\rag_metrics.png)
+![RAG Metrics](evaluation_charts/rag_metrics.png)
 
 ### Analysis
 - Recall is moderate, meaning the retriever finds some but not all expected statutes/sections. This could be improved with hybrid search (keyword + semantic).
@@ -61,7 +61,7 @@
 - **Argument Accuracy**: 100%
 - **False Positive Rate**: 0% (0/5)
 
-![Tool Accuracy](evaluation_charts\tool_accuracy.png)
+![Tool Accuracy](evaluation_charts/tool_accuracy.png)
 
 ### Detailed Results
 
@@ -88,7 +88,7 @@
 | tool_only | 10 | 34378.38 ms | 31688.27 ms | 44695.01 ms | 81734.34 ms | 67800.86 ms | 145156.91 ms | 162.65 ms |
 | mixed | 10 | 30500.78 ms | 26617.77 ms | 42551.66 ms | 102258.19 ms | 95213.95 ms | 163849.23 ms | 174.29 ms |
 
-![Latency Distribution](evaluation_charts\latency_boxplot.png)
+![Latency Distribution](evaluation_charts/latency_boxplot.png)
 
 ### Analysis
 - RAG queries add ~14225 ms overhead to TTFT compared to simple dialogue (embedding + ChromaDB search).
@@ -97,7 +97,19 @@
 ---
 ## 6. Throughput & Concurrency
 
-*No throughput results available.*
+| Users | Turns | Errors | Wall Time | Turns/sec | TTFT Mean | E2E Mean |
+|:-----:|:-----:|:------:|----------:|----------:|----------:|---------:|
+| 1 | 3 | 0 | 338955 ms | 0.009 | 33833.25 ms | 112982.98 ms |
+| 2 | 6 | 0 | 411457 ms | 0.015 | 58627.22 ms | 112290.91 ms |
+| 3 | 9 | 0 | 485756 ms | 0.018 | 83342.68 ms | 126577.11 ms |
+| 5 | 15 | 3 | 759069 ms | 0.020 | 141001.82 ms | 196044.87 ms |
+
+![Concurrency vs Latency](evaluation_charts/concurrency_latency.png)
+
+### Analysis
+- Latency increases by 1.7x from 1 to 5 concurrent users.
+- At 5 concurrent users, 3 errors occurred, indicating the system is near its capacity.
+- **Maximum sustainable concurrency**: ~1 users (median E2E < 60s, no errors).
 
 ---
 ## 7. Summary & Recommendations

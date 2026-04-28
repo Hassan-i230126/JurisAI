@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { apiUrl } from '../utils/config'
 
 export default function SettingsModal({ open, onClose, currentClient, onClientClear }) {
   const [clients, setClients] = useState([])
@@ -14,7 +15,7 @@ export default function SettingsModal({ open, onClose, currentClient, onClientCl
     setLoading(true)
     setError(null)
     try {
-      const res = await fetch('/api/clients')
+      const res = await fetch(apiUrl('/api/clients'))
       if (!res.ok) throw new Error('Failed to fetch clients')
       const data = await res.json()
       setClients(data.clients || [])
@@ -31,7 +32,7 @@ export default function SettingsModal({ open, onClose, currentClient, onClientCl
     }
 
     try {
-      const res = await fetch(`/api/clients/${clientId}`, {
+      const res = await fetch(apiUrl(`/api/clients/${clientId}`), {
         method: 'DELETE',
       })
       

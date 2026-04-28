@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { formatCitations } from '../utils/formatters'
+import { apiUrl } from '../utils/config'
 
 const SPEECH_MIN_CHARS = 60
 const SPEECH_MAX_CHARS = 180
@@ -47,7 +48,7 @@ export function useChat() {
   const loadClientHistory = useCallback(async (clientId) => {
     if (!clientId) return
     try {
-      const res = await fetch(`/api/clients/${encodeURIComponent(clientId)}/history`)
+      const res = await fetch(apiUrl(`/api/clients/${encodeURIComponent(clientId)}/history`))
       if (!res.ok) return
       const data = await res.json()
       if (!Array.isArray(data.history) || !data.history.length) return

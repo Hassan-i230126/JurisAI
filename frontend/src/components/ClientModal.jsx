@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
+import { apiUrl } from '../utils/config'
 
 const DEFAULT_CLIENT = {
   client_id: '',
@@ -86,7 +87,7 @@ export default function ClientModal({
     setErrorText('')
 
     try {
-      const response = await fetch(`/api/clients/${encodeURIComponent(candidate)}`)
+      const response = await fetch(apiUrl(`/api/clients/${encodeURIComponent(candidate)}`))
       const data = await response.json()
 
       if (!response.ok || !data.client) {
@@ -122,7 +123,7 @@ export default function ClientModal({
         name: clientDraft.name.trim(),
       }
 
-      const response = await fetch('/api/clients', {
+      const response = await fetch(apiUrl('/api/clients'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
